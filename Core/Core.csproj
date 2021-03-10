@@ -11,8 +11,11 @@
     <Folder Include="Aspects\Autofac\Transaction\" />
     <Folder Include="CrossCuttingConcerns\Logging\" />
     <Folder Include="CrossCuttingConcerns\Validation\" />
-    <Folder Include="Utilities\Interceptors\" />
     <Folder Include="Utilities\Results\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

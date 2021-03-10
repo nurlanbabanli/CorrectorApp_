@@ -1,4 +1,6 @@
-﻿using Entities.Concrete;
+﻿using Core.ActionReports;
+using Core.Utilities.DeviceIdentifier;
+using Entities.Concrete;
 using FieldBusiness.Abstract;
 using FieldDataAccess.Abstract;
 using FieldEntities.Concrete;
@@ -20,9 +22,9 @@ namespace FieldBusiness.Concrete
             _fieldHourlyArchiveParameterDal = fieldHourlyParameterDal;
         }
 
-        public async Task GetHourArchiveFromDeviceAsync(CorrectorMaster correctorMaster)
+        public async Task GetHourArchiveFromDeviceAsync(IDeviceParameter deviceParameter, IProgress<ProgressStatus> progress)
         {
-            List<FieldHourlyArchiveParameter> result = await _fieldHourlyArchiveParameterDal.GetFieldArchiveParametersAsync(correctorMaster);
+            List<FieldHourlyArchiveParameter> result = await _fieldHourlyArchiveParameterDal.GetFieldArchiveParametersAsync(deviceParameter,progress);
             OnFieldDataIsReadyEvent.Invoke(this, result);
         }
     }

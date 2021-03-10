@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using Business.Abstract;
 using Business.DependencyResolvers.Autofac;
+using Business.DeviceIdentifier;
+using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -17,7 +19,6 @@ namespace WinFormsAppTest
     public partial class Form1 : Form
     {
         IHourlyArchiveParameterService _hourArchiveParameterService;
-        ArchiveHandler _archiveHandler;
 
         public Form1()
         {
@@ -27,7 +28,7 @@ namespace WinFormsAppTest
         private void button1_Click(object sender, EventArgs e)
         {
             int idCount = 0;
-            List<CorrectorMaster> correctorMasters = new List<CorrectorMaster>();
+            List<DataTransmissionParameterHolder> dataTransmissionParameterHolder = new List<DataTransmissionParameterHolder>();
             foreach (var item in archiveHandlerHolder.Controls)
             {
                 if (item is ArchiveHandler)
@@ -36,11 +37,13 @@ namespace WinFormsAppTest
                     ArchiveHandler correctorArchiveHandler = (ArchiveHandler)item;
                     correctorArchiveHandler._correctorMaster.Id = idCount;
                     correctorArchiveHandler.Load(idCount);
-                    correctorMasters.Add(correctorArchiveHandler._correctorMaster);
+
+                    deviceParameters.Add(deviceParameter);
                 }
             }
 
-           GetHourArchiveFromDeviceAsync(correctorMasters, AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IHourlyArchiveParameterService>());
+            _hourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IHourlyArchiveParameterService>();
+            GetHourArchiveFromDeviceAsync(deviceParameters, _hourArchiveParameterService);
 
         }
 

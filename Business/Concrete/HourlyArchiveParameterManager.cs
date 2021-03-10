@@ -1,5 +1,8 @@
-﻿using Business.Abstract;
+﻿using Autofac;
+using Business.Abstract;
 using Business.DependencyResolvers.Autofac;
+using Business.DeviceIdentifier;
+using Core.ActionReports;
 using Entities.Concrete;
 using FieldBusiness.Abstract;
 using FieldBusiness.Concrete;
@@ -25,25 +28,26 @@ namespace Business.Concrete
             _fieldHourlyArchiveParameters = new List<List<FieldHourlyArchiveParameter>>();
         }
 
-        public async Task GetHourArchivesFromDeviceAsync(List<CorrectorMaster> correctorMasters)
+        public async Task GetHourArchivesFromDeviceAsync(List<DeviceParameter> deviceParameters)
         {
             _fieldHourlyArchiveParameters.Clear();
-            foreach (var correctorMaster in correctorMasters)
+            foreach (var deviceParameter in deviceParameters)
             {
-                GetHourArchiveFromDevice(correctorMaster, new FieldHourArchiveParameterManager(new MbFieldHourlyArchiveParameterDal())); 
+                await _semaphore.WaitAsync(50);
 
-                //AutofacBusinessContainerBuilder.AutofacBusinessContainer.ResolveComponent()
 
-                //GetHourArchiveFromDevice(correctorMaster, AutofacBusinessContainerBuilder.AutofacBusinessC)
-                await _semaphore.WaitAsync(500);
+                var progress = new Progress<ProgressStatus>(deviceParameter.ProgressReportAction);
+               
+
+                _fieldHourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldHourArchiveParameterService>();
+                _fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += _fieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
+                _fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(correctorMaster, progress);
             }
         }
 
-        private void GetHourArchiveFromDevice(CorrectorMaster correctorMaster, IFieldHourArchiveParameterService fieldHourArchiveParameterService)
+        private void Progress_ProgressChanged(object sender, ProgressStatus e)
         {
-            _fieldHourArchiveParameterService = fieldHourArchiveParameterService;
-            _fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += _fieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
-            _fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(correctorMaster);
+            throw new NotImplementedException();
         }
 
         private void _fieldHourArchiveParameterService_OnFieldDataIsReadyEvent(object sender, List<FieldHourlyArchiveParameter> e)

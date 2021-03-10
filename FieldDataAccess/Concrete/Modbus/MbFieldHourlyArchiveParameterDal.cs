@@ -1,4 +1,6 @@
-﻿using Entities.Concrete;
+﻿using Core.ActionReports;
+using Core.Utilities.DeviceIdentifier;
+using Entities.Concrete;
 using FieldDataAccess.Abstract;
 using FieldEntities.Concrete;
 using System;
@@ -20,7 +22,7 @@ namespace FieldDataAccess.Concrete.Modbus
 
         }
 
-        public Task<List<FieldHourlyArchiveParameter>> GetFieldArchiveParametersAsync(CorrectorMaster correctorMaster)
+        public Task<List<FieldHourlyArchiveParameter>> GetFieldArchiveParametersAsync(IDeviceParameter deviceParameter, IProgress<ProgressStatus> progress)
         {
             _result = new List<FieldHourlyArchiveParameter>();
 
@@ -32,6 +34,8 @@ namespace FieldDataAccess.Concrete.Modbus
                     _fieldHourlyParameter = new FieldHourlyArchiveParameter();
                     _fieldHourlyParameter.ABNo = correctorMaster.Id * 10 + i;
                     _fieldHourlyParameter.DeviceId = correctorMaster.Id;
+
+                    progress.Report(new ProgressStatus { Progress = i });
                     _result.Add(_fieldHourlyParameter);
                     Thread.Sleep(20);
                 }
