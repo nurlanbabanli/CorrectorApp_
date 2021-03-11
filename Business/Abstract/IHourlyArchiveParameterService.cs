@@ -1,4 +1,4 @@
-﻿using Business.DeviceIdentifier;
+﻿using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,6 @@ namespace Business.Abstract
 {
     public interface IHourlyArchiveParameterService
     {
-        Task GetHourArchivesFromDeviceAsync(List<DeviceParameter> deviceParameters);
+        Task GetHourArchivesFromDeviceAsync(List<DataTransmissionParameterHolder> deviceParameters);
     }
 }

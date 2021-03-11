@@ -1,4 +1,5 @@
-﻿using Entities.Concrete;
+﻿using Core.Utilities.FieldDeviceIdentifier;
+using Entities.Concrete;
 using FieldDataAccess.Abstract;
 using FieldEntities.Concrete;
 using System;
@@ -25,7 +26,7 @@ namespace FieldDataAccess.Concrete.Modbus
             _result = new List<FieldMonthlyType2ArchiveParameter>();
             _fieldMonthlyType2ArchiveParameter = new FieldMonthlyType2ArchiveParameter();
         }
-        public Task<List<FieldMonthlyType2ArchiveParameter>> GetFieldArchiveParametersAsync(CorrectorMaster deviceParameter)
+        public Task<List<FieldMonthlyType2ArchiveParameter>> GetFieldArchiveParametersAsync(DataTransmissionParameterHolder deviceParameter)
         {
 
             return (Task<List<FieldMonthlyType2ArchiveParameter>>)Task.Run(() =>

@@ -1,4 +1,5 @@
-﻿using Entities.Concrete;
+﻿using Core.Utilities.FieldDeviceIdentifier;
+using Entities.Concrete;
 using FieldDataAccess.Abstract;
 using FieldEntities.Concrete;
 using System;
@@ -11,7 +12,7 @@ namespace FieldDataAccess.Concrete.Modbus
 {
     public class MbFieldCurrentParameterDal : IFieldCurrentParameterDal
     {
-        public Task<List<FieldCurrentParameter>> GetFieldArchiveParametersAsync(CorrectorMaster deviceParameter)
+        public Task<List<FieldCurrentParameter>> GetFieldArchiveParametersAsync(DataTransmissionParameterHolder deviceParameter)
         {
             throw new NotImplementedException();
         }

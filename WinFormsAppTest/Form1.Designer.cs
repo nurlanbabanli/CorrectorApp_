@@ -35,16 +35,20 @@ namespace WinFormsAppTest
             // 
             // archiveHandlerHolder
             // 
-            this.archiveHandlerHolder.Location = new System.Drawing.Point(12, 12);
+            this.archiveHandlerHolder.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.archiveHandlerHolder.AutoScroll = true;
+            this.archiveHandlerHolder.Location = new System.Drawing.Point(12, 54);
             this.archiveHandlerHolder.Name = "archiveHandlerHolder";
-            this.archiveHandlerHolder.Size = new System.Drawing.Size(266, 185);
+            this.archiveHandlerHolder.Size = new System.Drawing.Size(974, 438);
             this.archiveHandlerHolder.TabIndex = 0;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(367, 27);
+            this.button1.Location = new System.Drawing.Point(862, 12);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(129, 52);
+            this.button1.Size = new System.Drawing.Size(103, 36);
             this.button1.TabIndex = 1;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
@@ -55,7 +59,7 @@ namespace WinFormsAppTest
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonShadow;
-            this.ClientSize = new System.Drawing.Size(547, 290);
+            this.ClientSize = new System.Drawing.Size(1074, 504);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.archiveHandlerHolder);
             this.Name = "Form1";

@@ -1,8 +1,12 @@
 ﻿using Autofac;
 using Business.Abstract;
 using Business.DependencyResolvers.Autofac;
-using Business.DeviceIdentifier;
+using Business.Utilities;
+using Business.ValidationRules.FluentValidation;
 using Core.ActionReports;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.FluentValidation;
+using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using FieldBusiness.Abstract;
 using FieldBusiness.Concrete;
@@ -19,38 +23,38 @@ namespace Business.Concrete
 {
     public class HourlyArchiveParameterManager : IHourlyArchiveParameterService
     {
-        public IFieldHourArchiveParameterService _fieldHourArchiveParameterService;
-        SemaphoreSlim _semaphore;
         List<List<FieldHourlyArchiveParameter>> _fieldHourlyArchiveParameters;
+        
         public HourlyArchiveParameterManager()
         {
-            _semaphore = new SemaphoreSlim(10);
             _fieldHourlyArchiveParameters = new List<List<FieldHourlyArchiveParameter>>();
         }
 
-        public async Task GetHourArchivesFromDeviceAsync(List<DeviceParameter> deviceParameters)
+        public async Task GetHourArchivesFromDeviceAsync(List<DataTransmissionParameterHolder> deviceParameters)
         {
             _fieldHourlyArchiveParameters.Clear();
+            var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
+            IFieldHourArchiveParameterService fieldHourArchiveParameterService;
+
             foreach (var deviceParameter in deviceParameters)
             {
-                await _semaphore.WaitAsync(50);
-
-
-                var progress = new Progress<ProgressStatus>(deviceParameter.ProgressReportAction);
-               
-
-                _fieldHourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldHourArchiveParameterService>();
-                _fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += _fieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
-                _fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(correctorMaster, progress);
+                deviceParameter.SemaphoreSlimT = semaphoreSlim;
+                await deviceParameter.SemaphoreSlimT.WaitAsync();                             
+                fieldHourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldHourArchiveParameterService>();
+                GetHourArchiveFromDeviceAsync(deviceParameter, fieldHourArchiveParameterService);
             }
         }
 
-        private void Progress_ProgressChanged(object sender, ProgressStatus e)
+        [ValidationAspect(typeof(DeviceParameterValidator))]
+        public void GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter, IFieldHourArchiveParameterService fieldHourArchiveParameterService)
         {
-            throw new NotImplementedException();
+            //ValidationTool.Validate(new DeviceParameterValidator(), deviceParameter);
+
+            fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += FieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
+            fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(deviceParameter);
         }
 
-        private void _fieldHourArchiveParameterService_OnFieldDataIsReadyEvent(object sender, List<FieldHourlyArchiveParameter> e)
+        private void FieldHourArchiveParameterService_OnFieldDataIsReadyEvent(object sender, List<FieldHourlyArchiveParameter> e)
         {
             _fieldHourlyArchiveParameters.Add(e);
         }

@@ -1,4 +1,6 @@
-﻿using Core.FieldDataAccess;
+﻿using Core.ActionReports;
+using Core.FieldDataAccess;
+using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using FieldEntities.Concrete;
 using System;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FieldDataAccess.Abstract
 {
-    public interface IFieldDailyArchiveParameterDal : IFieldEntityRepository<FieldDailyArchiveParameter, CorrectorMaster>
+    public interface IFieldDailyArchiveParameterDal : IFieldEntityRepository<FieldDailyArchiveParameter, DataTransmissionParameterHolder>
     {
     }
 }

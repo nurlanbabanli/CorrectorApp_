@@ -1,5 +1,5 @@
 ﻿using Core.ActionReports;
-using Core.Utilities.DeviceIdentifier;
+using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using FieldDataAccess.Abstract;
 using FieldEntities.Concrete;
@@ -22,26 +22,36 @@ namespace FieldDataAccess.Concrete.Modbus
 
         }
 
-        public Task<List<FieldHourlyArchiveParameter>> GetFieldArchiveParametersAsync(IDeviceParameter deviceParameter, IProgress<ProgressStatus> progress)
+        public Task<List<FieldHourlyArchiveParameter>> GetFieldArchiveParametersAsync(DataTransmissionParameterHolder deviceParameter)
         {
             _result = new List<FieldHourlyArchiveParameter>();
-
             return (Task<List<FieldHourlyArchiveParameter>>)Task.Run(() =>
             {
                 // below codes is for test. real codes will be added later.
-                for (int i = 0; i < 20; i++)
+                
+                for (int i = 0; i < 100; i++)
                 {
                     _fieldHourlyParameter = new FieldHourlyArchiveParameter();
-                    _fieldHourlyParameter.ABNo = correctorMaster.Id * 10 + i;
-                    _fieldHourlyParameter.DeviceId = correctorMaster.Id;
+                    _fieldHourlyParameter.ABNo = deviceParameter.DeviceParametersHolder.Id * 10 + i;
+                    _fieldHourlyParameter.DeviceId = deviceParameter.DeviceParametersHolder.Id;
 
-                    progress.Report(new ProgressStatus { Progress = i });
+                    deviceParameter.UserInterfaceParametersHolder.ProgressReport.Report(new ProgressStatus { Progress = i });
                     _result.Add(_fieldHourlyParameter);
-                    Thread.Sleep(20);
+                    for (int k = 0; k <10000; k++)
+                    {
+                        for (int l = 0; l < 1000; l++)
+                        {
+                            int g = (k + l) * l;
+                        }                      
+                    }
+                    
                 }
 
+                deviceParameter.SemaphoreSlimT.Release();
                 return _result;
             });
+
+            
         }
     }
 }

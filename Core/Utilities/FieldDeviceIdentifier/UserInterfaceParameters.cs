@@ -9,6 +9,6 @@ namespace Core.Utilities.FieldDeviceIdentifier
 {
     public class UserInterfaceParameters
     {
-        public Action<ProgressStatus> ProgressReportAction { get; set; }
+        public IProgress<ProgressStatus> ProgressReport { get; set; }
     }
 }

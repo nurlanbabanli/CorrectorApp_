@@ -9,6 +9,6 @@ namespace Core.FieldDataAccess
 {
     public interface IFieldEntityRepository<TResultData, TDeviceParameter>
     {
-        Task<List<TResultData>> GetFieldArchiveParametersAsync(TDeviceParameter deviceParameter,IProgress<ProgressStatus> progress);
+        Task<List<TResultData>> GetFieldArchiveParametersAsync(TDeviceParameter deviceParameter);
     }
 }

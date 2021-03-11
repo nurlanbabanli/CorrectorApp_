@@ -1,4 +1,5 @@
-﻿using Entities.Concrete;
+﻿using Core.Utilities.FieldDeviceIdentifier;
+using Entities.Concrete;
 using FieldEntities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,6 @@ namespace FieldDataAccess.Abstract
 {
     public interface IFieldMonthlyType2ArchivePart1ParameterDal
     {
-        FieldMonthlyType2ArchivePart1Parameter GetFieldMonthlyType2ArchivePart1Parameter(CorrectorMaster correctorMaster);
+        FieldMonthlyType2ArchivePart1Parameter GetFieldMonthlyType2ArchivePart1Parameter(DataTransmissionParameterHolder deviceParameter);
     }
 }

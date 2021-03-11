@@ -1,4 +1,5 @@
 ﻿using Core.FieldDataAccess;
+using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using FieldEntities.Concrete;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FieldDataAccess.Abstract
 {
-    public interface IFieldEventArchiveParameterDal : IFieldEntityRepository<FieldEventArchiveParameter, CorrectorMaster>
+    public interface IFieldEventArchiveParameterDal : IFieldEntityRepository<FieldEventArchiveParameter, DataTransmissionParameterHolder>
     {
     }
 }

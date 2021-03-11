@@ -1,6 +1,6 @@
 ﻿using Core.ActionReports;
 using Core.Events.Abstract;
-using Core.Utilities.DeviceIdentifier;
+using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using FieldEntities.Concrete;
 using System;
@@ -13,6 +13,6 @@ namespace FieldBusiness.Abstract
 {
     public interface IFieldHourArchiveParameterService : IResultEvent<FieldHourlyArchiveParameter>
     {
-        Task GetHourArchiveFromDeviceAsync(IDeviceParameter deviceParameter,IProgress<ProgressStatus> progress);
+        Task GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter);
     }
 }

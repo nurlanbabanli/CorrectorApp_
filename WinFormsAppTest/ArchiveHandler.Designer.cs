@@ -30,6 +30,7 @@ namespace WinFormsAppTest
         private void InitializeComponent()
         {
             this.lblId = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // lblId
@@ -42,14 +43,22 @@ namespace WinFormsAppTest
             this.lblId.TabIndex = 0;
             this.lblId.Text = "label1";
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(0, 58);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(183, 17);
+            this.progressBar1.TabIndex = 1;
+            // 
             // ArchiveHandler
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Highlight;
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.lblId);
             this.Name = "ArchiveHandler";
-            this.Size = new System.Drawing.Size(183, 58);
+            this.Size = new System.Drawing.Size(183, 75);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -58,5 +67,6 @@ namespace WinFormsAppTest
         #endregion
 
         private System.Windows.Forms.Label lblId;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

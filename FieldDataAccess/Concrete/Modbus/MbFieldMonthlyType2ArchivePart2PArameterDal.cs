@@ -1,4 +1,5 @@
-﻿using Entities.Concrete;
+﻿using Core.Utilities.FieldDeviceIdentifier;
+using Entities.Concrete;
 using FieldDataAccess.Abstract;
 using FieldEntities.Concrete;
 using System;
@@ -11,7 +12,7 @@ namespace FieldDataAccess.Concrete.Modbus
 {
     public class MbFieldMonthlyType2ArchivePart2PArameterDal : IFieldMonthlyType2ArchivePart2ParameterDal
     {
-        public FieldMonthlyType2ArchivePart2Parameter GetFieldMonthlyType2ArchivePart2Parameter(CorrectorMaster correctorMaster)
+        public FieldMonthlyType2ArchivePart2Parameter GetFieldMonthlyType2ArchivePart2Parameter(DataTransmissionParameterHolder deviceParameter)
         {
             throw new NotImplementedException();
         }

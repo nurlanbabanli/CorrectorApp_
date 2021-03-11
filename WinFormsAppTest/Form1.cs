@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Business.Abstract;
 using Business.DependencyResolvers.Autofac;
-using Business.DeviceIdentifier;
+using Business.Utilities;
 using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using System;
@@ -27,37 +27,35 @@ namespace WinFormsAppTest
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int idCount = 0;
+            ConcurrentTaskLimiter.ParalelTasks = 2;
+
             List<DataTransmissionParameterHolder> dataTransmissionParameterHolder = new List<DataTransmissionParameterHolder>();
             foreach (var item in archiveHandlerHolder.Controls)
             {
                 if (item is ArchiveHandler)
                 {
-                    idCount++;
                     ArchiveHandler correctorArchiveHandler = (ArchiveHandler)item;
-                    correctorArchiveHandler._correctorMaster.Id = idCount;
-                    correctorArchiveHandler.Load(idCount);
-
-                    deviceParameters.Add(deviceParameter);
+                    dataTransmissionParameterHolder.Add(ParametersTransfer.CombineData(correctorArchiveHandler));          
                 }
             }
 
             _hourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IHourlyArchiveParameterService>();
-            GetHourArchiveFromDeviceAsync(deviceParameters, _hourArchiveParameterService);
+            GetHourArchiveFromDeviceAsync(dataTransmissionParameterHolder, _hourArchiveParameterService);
 
         }
 
 
-        private void GetHourArchiveFromDeviceAsync(List<CorrectorMaster> correctorMasters, IHourlyArchiveParameterService hourArchiveParameterService)
+        private void GetHourArchiveFromDeviceAsync(List<DataTransmissionParameterHolder> DeviceParameters, IHourlyArchiveParameterService hourArchiveParameterService)
         {
             _hourArchiveParameterService = hourArchiveParameterService;
-            _hourArchiveParameterService.GetHourArchivesFromDeviceAsync(correctorMasters);
+            _hourArchiveParameterService.GetHourArchivesFromDeviceAsync(DeviceParameters);
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            for (int i = 0; i < 2; i++)
+            ArchiveHandler _archiveHandler;
+            for (int i = 0; i < 50; i++)
             {
-                _archiveHandler = new ArchiveHandler();
+                _archiveHandler = new ArchiveHandler(i);
                 archiveHandlerHolder.Controls.Add(_archiveHandler);
             }
         }

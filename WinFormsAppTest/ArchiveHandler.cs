@@ -16,20 +16,20 @@ namespace WinFormsAppTest
     {
         public CorrectorMaster _correctorMaster;
         public Action<ProgressStatus> Action;
-        public ArchiveHandler()
+        public ArchiveHandler(int TestId)
         {
             InitializeComponent();
             _correctorMaster = new CorrectorMaster();
+            _correctorMaster.Id = TestId;
+            lblId.Text = _correctorMaster.Id.ToString();
             Action = ReportProgress;
         }
-        public void Load(int id)
-        {
-            lblId.Text = id.ToString();
-        }
+
 
         void ReportProgress(ProgressStatus progress)
         {
-
+            progressBar1.Value = progress.Progress;
+            lblId.Text = _correctorMaster.Id.ToString() + "  " + progress.Progress.ToString();
         }
     }
 }
