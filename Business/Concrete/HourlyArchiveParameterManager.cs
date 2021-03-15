@@ -30,6 +30,7 @@ namespace Business.Concrete
             _fieldHourlyArchiveParameters = new List<List<FieldHourlyArchiveParameter>>();
         }
 
+        [ValidationAspect(typeof(DataTransmissionParameterHolderValidator))]
         public async Task GetHourArchivesFromDeviceAsync(List<DataTransmissionParameterHolder> deviceParameters)
         {
             _fieldHourlyArchiveParameters.Clear();
@@ -41,12 +42,12 @@ namespace Business.Concrete
                 deviceParameter.SemaphoreSlimT = semaphoreSlim;
                 await deviceParameter.SemaphoreSlimT.WaitAsync();                             
                 fieldHourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldHourArchiveParameterService>();
+
                 GetHourArchiveFromDeviceAsync(deviceParameter, fieldHourArchiveParameterService);
             }
         }
-
-        [ValidationAspect(typeof(DeviceParameterValidator))]
-        public void GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter, IFieldHourArchiveParameterService fieldHourArchiveParameterService)
+     
+        private void GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter, IFieldHourArchiveParameterService fieldHourArchiveParameterService)
         {
             //ValidationTool.Validate(new DeviceParameterValidator(), deviceParameter);
 

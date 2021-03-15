@@ -53,7 +53,7 @@ namespace WinFormsAppTest
         private void Form1_Load(object sender, EventArgs e)
         {
             ArchiveHandler _archiveHandler;
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 5; i++)
             {
                 _archiveHandler = new ArchiveHandler(i);
                 archiveHandlerHolder.Controls.Add(_archiveHandler);

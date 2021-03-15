@@ -9,12 +9,17 @@ namespace Core.Results.Concrete
 {
     public class ErrorResult : Result, IResult
     {
-        public ErrorResult(string message, bool isSuccess) : base(message, false)
+        public ErrorResult(string message) : base(message, false)
         {
 
         }
 
-        public ErrorResult(bool isSuccess) : base(false)
+        public ErrorResult(List<string> messageList) : base(messageList, false)
+        {
+
+        }
+
+        public ErrorResult() : base(false)
         {
 
         }

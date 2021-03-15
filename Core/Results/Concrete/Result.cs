@@ -14,6 +14,11 @@ namespace Core.Results.Concrete
             Message = message;
         }
 
+        public Result(List<string> messageList, bool isSuccess) : this(isSuccess)
+        {
+            MessageList = messageList;
+        }
+
         public Result(bool isSuccess)
         {
             IsSuccess = isSuccess;
@@ -21,5 +26,6 @@ namespace Core.Results.Concrete
 
         public string Message { get; }
         public bool IsSuccess { get; }
+        public List<string> MessageList { get; }
     }
 }
