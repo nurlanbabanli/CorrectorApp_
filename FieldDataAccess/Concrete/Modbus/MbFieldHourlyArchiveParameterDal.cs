@@ -24,8 +24,9 @@ namespace FieldDataAccess.Concrete.Modbus
 
         public Task<List<FieldHourlyArchiveParameter>> GetFieldArchiveParametersAsync(DataTransmissionParameterHolder deviceParameter)
         {
+            //throw new Exception("hi ");
             _result = new List<FieldHourlyArchiveParameter>();
-            return (Task<List<FieldHourlyArchiveParameter>>)Task.Run(() =>
+            var task1= (Task<List<FieldHourlyArchiveParameter>>)Task.Run(() =>
             {
                 // below codes is for test. real codes will be added later.
                 
@@ -44,14 +45,15 @@ namespace FieldDataAccess.Concrete.Modbus
                             int g = (k + l) * l;
                         }                      
                     }
-                    
+
+                    throw new Exception("hi");
+
                 }
 
                 deviceParameter.SemaphoreSlimT.Release();
                 return _result;
             });
-
-            
+            return task1;
         }
     }
 }

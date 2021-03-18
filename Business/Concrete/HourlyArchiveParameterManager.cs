@@ -24,7 +24,7 @@ namespace Business.Concrete
     public class HourlyArchiveParameterManager : IHourlyArchiveParameterService
     {
         List<List<FieldHourlyArchiveParameter>> _fieldHourlyArchiveParameters;
-        
+
         public HourlyArchiveParameterManager()
         {
             _fieldHourlyArchiveParameters = new List<List<FieldHourlyArchiveParameter>>();
@@ -37,23 +37,21 @@ namespace Business.Concrete
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
             IFieldHourArchiveParameterService fieldHourArchiveParameterService;
 
+
             foreach (var deviceParameter in deviceParameters)
             {
                 deviceParameter.SemaphoreSlimT = semaphoreSlim;
                 await deviceParameter.SemaphoreSlimT.WaitAsync();                             
                 fieldHourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldHourArchiveParameterService>();
 
-                GetHourArchiveFromDeviceAsync(deviceParameter, fieldHourArchiveParameterService);
+
+                
+                _ = fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(deviceParameter);
+                fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += FieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
+
             }
         }
      
-        private void GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter, IFieldHourArchiveParameterService fieldHourArchiveParameterService)
-        {
-            //ValidationTool.Validate(new DeviceParameterValidator(), deviceParameter);
-
-            fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += FieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
-            fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(deviceParameter);
-        }
 
         private void FieldHourArchiveParameterService_OnFieldDataIsReadyEvent(object sender, List<FieldHourlyArchiveParameter> e)
         {

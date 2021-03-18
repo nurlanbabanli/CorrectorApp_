@@ -7,19 +7,18 @@ using System.Threading.Tasks;
 
 namespace Core.Results.Concrete
 {
-    public class Result : IResult
+    public class ValidationResult:IValidationResult
     {
-        public Result(string message, bool isSuccess) : this(isSuccess)
+        public ValidationResult(List<string> messageList, bool isSuccess) : this(isSuccess)
         {
-            Message = message;
+            MessageList = messageList;
         }
 
-        public Result(bool isSuccess)
+        public ValidationResult(bool isSuccess)
         {
             IsSuccess = isSuccess;
         }
-
-        public string Message { get; }
         public bool IsSuccess { get; }
+        public List<string> MessageList { get; }
     }
 }

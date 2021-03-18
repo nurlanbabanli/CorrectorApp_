@@ -13,7 +13,7 @@ namespace Business.ValidationRules.FluentValidation
     {
         public DataTransmissionParameterHolderValidator()
         {
-            RuleFor(dt => dt.Count).GreaterThan(6).WithMessage("Nurlan");
+            RuleFor(dt => dt.Count).GreaterThan(3).WithMessage(Messages.DeviceParametersIsEmpty);
         }
     }
 }

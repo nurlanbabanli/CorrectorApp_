@@ -7,16 +7,18 @@ using System.Threading.Tasks;
 
 namespace Core.Results.Concrete
 {
-    public class ErrorResult : Result, IResult
+    public partial class ValidationErrorResult:ValidationResult, IValidationResult
     {
-        public ErrorResult(string message) : base(message, false)
+
+        public ValidationErrorResult(List<string> messageList) : base(messageList, false)
         {
 
         }
 
-        public ErrorResult() : base(false)
+        public ValidationErrorResult() : base(false)
         {
 
         }
+
     }
 }

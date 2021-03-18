@@ -3,6 +3,7 @@ using Autofac.Extras.DynamicProxy;
 using Business.Abstract;
 using Business.Concrete;
 using Castle.DynamicProxy;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Interceptors;
 using FieldBusiness.Abstract;
 using FieldBusiness.Concrete;
@@ -26,12 +27,16 @@ namespace Business.DependencyResolvers.Autofac
 
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            //var assemblyies = AppDomain.CurrentDomain.GetAssemblies()
+            //    .Where(asm => asm.FullName == "Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"| 
+            //    asm.FullName == "FieldBusiness, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null").ToList();
 
-            builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
-                .EnableInterfaceInterceptors(new ProxyGenerationOptions()
-                {
-                    Selector = new AspectInterceptorSelector()
-                }).InstancePerDependency();
+
+            builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces().EnableInterfaceInterceptors(new ProxyGenerationOptions()
+            {
+                Selector = new AspectInterceptorSelector()
+            }).InstancePerDependency();
+
         }
     }
 }

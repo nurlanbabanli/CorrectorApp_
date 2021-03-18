@@ -40,7 +40,15 @@ namespace WinFormsAppTest
             }
 
             _hourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IHourlyArchiveParameterService>();
-            GetHourArchiveFromDeviceAsync(dataTransmissionParameterHolder, _hourArchiveParameterService);
+            try
+            {
+                GetHourArchiveFromDeviceAsync(dataTransmissionParameterHolder, _hourArchiveParameterService);
+            }
+            catch (Exception ex)
+            {
+
+                lblValidationException.Text = ex.Message;
+            }
 
         }
 

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Core.Results.Abstract
 {
-    public interface IResult
+    public interface IValidationResult
     {
-        string Message { get; }
+        List<string> MessageList { get; }
         bool IsSuccess { get; }
     }
 }

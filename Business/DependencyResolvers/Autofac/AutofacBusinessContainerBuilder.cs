@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Core.DependencyResolvers.Autofac;
+using FieldBusiness.DependencyResolvers.Autofac;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +16,8 @@ namespace Business.DependencyResolvers.Autofac
         {
             ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterModule<AutofacBusinessModule>();
+            builder.RegisterModule<AutofacCoreModule>();
+            builder.RegisterModule<AutofacFieldBusinessModule>();
             AutofacBusinessContainer = builder.Build();
         }
     }
