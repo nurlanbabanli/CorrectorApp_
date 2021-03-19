@@ -27,7 +27,6 @@ namespace FieldBusiness.Concrete
         [ValidationAspect(typeof(DataTransmissionParameterHolderValidator))]
         public async Task GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter)
         {
-            //throw new Exception();
             List<FieldHourlyArchiveParameter> result = await _fieldHourlyArchiveParameterDal.GetFieldArchiveParametersAsync(deviceParameter);
            
             OnFieldDataIsReadyEvent.Invoke(this, result);

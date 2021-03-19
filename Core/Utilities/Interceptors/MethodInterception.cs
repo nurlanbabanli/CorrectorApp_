@@ -33,18 +33,14 @@ namespace Core.Utilities.Interceptors
                     var result = invocation.ReturnValue as Task;
                     if (result.Exception!=null)
                     {
-                        result.Wait();
+                        throw result.Exception;
                     }
-                    //if (result.Exception!=null)
-                    //{
-                    //    throw new Exception(" ", result.Exception);
-                    //}
                 }
                 catch (Exception e)
                 {
                     isSuccess = false;
                     OnException(invocation, e);
-                    //throw;
+                    throw;
                 }
                 finally
                 {
@@ -57,15 +53,20 @@ namespace Core.Utilities.Interceptors
             }
             catch (Exception ex)
             {
+                CallSemaphoreSlimRelase(invocation);
+            }
+        }
+        
 
-                invocation.ReturnValue = null;
-                ParameterInfo[] parameterInfos= invocation.Method.GetParameters();
+        private static void CallSemaphoreSlimRelase(IInvocation invocation)
+        {
+            invocation.ReturnValue = null;
+            ParameterInfo[] parameterInfos = invocation.Method.GetParameters();
 
-                if (parameterInfos.Length!=0 && typeof(DataTransmissionParameterHolder)==parameterInfos[0].ParameterType)
-                {
-                    DataTransmissionParameterHolder dataTransmissionParameterHolder = (DataTransmissionParameterHolder)invocation.Arguments[0];
-                    dataTransmissionParameterHolder.SemaphoreSlimT.Release();
-                }
+            if (parameterInfos.Length != 0 && typeof(DataTransmissionParameterHolder) == parameterInfos[0].ParameterType)
+            {
+                DataTransmissionParameterHolder dataTransmissionParameterHolder = (DataTransmissionParameterHolder)invocation.Arguments[0];
+                dataTransmissionParameterHolder.SemaphoreSlimT.Release();
             }
         }
     }

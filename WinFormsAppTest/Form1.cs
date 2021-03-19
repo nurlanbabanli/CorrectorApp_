@@ -29,20 +29,20 @@ namespace WinFormsAppTest
         {
             ConcurrentTaskLimiter.ParalelTasks = 2;
 
-            List<DataTransmissionParameterHolder> dataTransmissionParameterHolder = new List<DataTransmissionParameterHolder>();
+            DataTransmissionParametersHolderList dataTransmissionParameterHolderList = new DataTransmissionParametersHolderList();
             foreach (var item in archiveHandlerHolder.Controls)
             {
                 if (item is ArchiveHandler)
                 {
                     ArchiveHandler correctorArchiveHandler = (ArchiveHandler)item;
-                    dataTransmissionParameterHolder.Add(ParametersTransfer.CombineData(correctorArchiveHandler));          
+                    dataTransmissionParameterHolderList.DataTransmissionParameterHolderList.Add(ParametersTransfer.CombineData(correctorArchiveHandler));        
                 }
             }
 
             _hourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IHourlyArchiveParameterService>();
             try
             {
-                GetHourArchiveFromDeviceAsync(dataTransmissionParameterHolder, _hourArchiveParameterService);
+                GetHourArchiveFromDeviceAsync(dataTransmissionParameterHolderList, _hourArchiveParameterService);
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace WinFormsAppTest
         }
 
 
-        private void GetHourArchiveFromDeviceAsync(List<DataTransmissionParameterHolder> DeviceParameters, IHourlyArchiveParameterService hourArchiveParameterService)
+        private void GetHourArchiveFromDeviceAsync(DataTransmissionParametersHolderList DeviceParameters, IHourlyArchiveParameterService hourArchiveParameterService)
         {
             _hourArchiveParameterService = hourArchiveParameterService;
             _hourArchiveParameterService.GetHourArchivesFromDeviceAsync(DeviceParameters);
@@ -61,9 +61,16 @@ namespace WinFormsAppTest
         private void Form1_Load(object sender, EventArgs e)
         {
             ArchiveHandler _archiveHandler;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 6; i++)
             {
-                _archiveHandler = new ArchiveHandler(i);
+                if (i==100)
+                {
+                    _archiveHandler = new ArchiveHandler(0); 
+                }
+                else
+                {
+                    _archiveHandler = new ArchiveHandler(i);
+                }
                 archiveHandlerHolder.Controls.Add(_archiveHandler);
             }
         }

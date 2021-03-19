@@ -13,5 +13,10 @@ namespace Core.Utilities.FieldDeviceIdentifier
         public DeviceParameters DeviceParametersHolder { get; set; }
         public UserInterfaceParameters UserInterfaceParametersHolder { get; set; }
         public SemaphoreSlim SemaphoreSlimT { get; set; }
+
+        public DataTransmissionParameterHolder()
+        {
+            SemaphoreSlimT = new SemaphoreSlim(2, 2);
+        }
     }
 }

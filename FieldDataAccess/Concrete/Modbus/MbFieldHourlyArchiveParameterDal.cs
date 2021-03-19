@@ -14,7 +14,7 @@ namespace FieldDataAccess.Concrete.Modbus
 {
     public class MbFieldHourlyArchiveParameterDal : IFieldHourlyArchiveParameterDal
     {
-        List<FieldHourlyArchiveParameter> _result;
+        
         FieldHourlyArchiveParameter _fieldHourlyParameter;
 
         public MbFieldHourlyArchiveParameterDal()
@@ -24,36 +24,49 @@ namespace FieldDataAccess.Concrete.Modbus
 
         public Task<List<FieldHourlyArchiveParameter>> GetFieldArchiveParametersAsync(DataTransmissionParameterHolder deviceParameter)
         {
-            //throw new Exception("hi ");
-            _result = new List<FieldHourlyArchiveParameter>();
-            var task1= (Task<List<FieldHourlyArchiveParameter>>)Task.Run(() =>
+            List<FieldHourlyArchiveParameter> result = new List<FieldHourlyArchiveParameter>();
+
+            return (Task<List<FieldHourlyArchiveParameter>>)Task.Run(() =>
             {
                 // below codes is for test. real codes will be added later.
-                
-                for (int i = 0; i < 100; i++)
+
+                try
                 {
-                    _fieldHourlyParameter = new FieldHourlyArchiveParameter();
-                    _fieldHourlyParameter.ABNo = deviceParameter.DeviceParametersHolder.Id * 10 + i;
-                    _fieldHourlyParameter.DeviceId = deviceParameter.DeviceParametersHolder.Id;
-
-                    deviceParameter.UserInterfaceParametersHolder.ProgressReport.Report(new ProgressStatus { Progress = i });
-                    _result.Add(_fieldHourlyParameter);
-                    for (int k = 0; k <10000; k++)
-                    {
-                        for (int l = 0; l < 1000; l++)
-                        {
-                            int g = (k + l) * l;
-                        }                      
-                    }
-
-                    throw new Exception("hi");
-
+                    result = MyTestMethod1(deviceParameter);
                 }
-
-                deviceParameter.SemaphoreSlimT.Release();
-                return _result;
+                catch (Exception ex)
+                {
+                    string exc = ex.Message;
+                }
+                finally
+                {
+                    deviceParameter.SemaphoreSlimT.Release();
+                }
+                return result;
             });
-            return task1;
         }
+
+        private List<FieldHourlyArchiveParameter> MyTestMethod1(DataTransmissionParameterHolder deviceParameter)
+        {
+            List<FieldHourlyArchiveParameter> result = new List<FieldHourlyArchiveParameter>();
+            for (int i = 0; i < 100; i++)
+            {
+                _fieldHourlyParameter = new FieldHourlyArchiveParameter();
+                _fieldHourlyParameter.ABNo = deviceParameter.DeviceParametersHolder.Id * 10 + i;
+                _fieldHourlyParameter.DeviceId = deviceParameter.DeviceParametersHolder.Id;
+
+                deviceParameter.UserInterfaceParametersHolder.ProgressReport.Report(new ProgressStatus { Progress = i });
+                result.Add(_fieldHourlyParameter);
+                for (int k = 0; k < 10000; k++)
+                {
+                    for (int l = 0; l < 1000; l++)
+                    {
+                        int g = (k + l) * l;
+                    }
+                }              
+            }                     
+            return result;
+        }
+
     }
 }

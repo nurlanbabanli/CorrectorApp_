@@ -11,6 +11,6 @@ namespace Business.Abstract
 {
     public interface IHourlyArchiveParameterService
     {
-        Task GetHourArchivesFromDeviceAsync(List<DataTransmissionParameterHolder> deviceParameters);
+        Task GetHourArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters);
     }
 }

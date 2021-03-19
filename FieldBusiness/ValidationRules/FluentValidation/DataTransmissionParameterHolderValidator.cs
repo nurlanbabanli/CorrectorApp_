@@ -1,4 +1,5 @@
 ﻿using Core.Utilities.FieldDeviceIdentifier;
+using FieldBusiness.FieldBusinessMessages;
 using FluentValidation;
 using FluentValidation.Results;
 using System;
@@ -17,6 +18,18 @@ namespace FieldBusiness.ValidationRules.FluentValidation
             RuleFor(dt => dt.ArchiveParametersHolder).NotEmpty();
             RuleFor(dt => dt.SemaphoreSlimT).NotNull().WithMessage("nn");
             RuleFor(dt => dt.DeviceParametersHolder).NotNull().WithMessage("bb");
+            RuleFor(dt => dt.DeviceParametersHolder).SetValidator(new DeviceParametersHolderValidator());
+        }
+    }
+
+    public class DeviceParametersHolderValidator:AbstractValidator<DeviceParameters>
+    {
+        private string k = null;
+        public DeviceParametersHolderValidator()
+        {
+           // RuleFor(d => d.Id).NotEmpty().WithMessage(Messages.DeviceIdIsNull);
+            RuleFor(d => d.IpAddresss).NotEmpty().WithMessage(Messages.DeviceIpIsNull);
+            
         }
     }
 }
