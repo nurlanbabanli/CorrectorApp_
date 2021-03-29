@@ -37,12 +37,13 @@ namespace Business.Concrete
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
             foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
             {
+                throw new Exception("Nurlan");
                 deviceParameter.SemaphoreSlimT = semaphoreSlim;
                 await deviceParameter.SemaphoreSlimT.WaitAsync();
                 var fieldHourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldHourArchiveParameterService>();
                 _ = fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(deviceParameter);
                 fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += FieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
-
+                
             }
         }
 

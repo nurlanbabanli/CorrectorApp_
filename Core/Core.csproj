@@ -5,16 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Aspects\Autofac\Exception\" />
     <Folder Include="Aspects\Autofac\Logging\" />
     <Folder Include="Aspects\Autofac\Transaction\" />
-    <Folder Include="CrossCuttingConcerns\Logging\" />
     <Folder Include="Utilities\Results\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.0" />
     <PackageReference Include="FluentValidation" Version="9.5.2" />
+    <PackageReference Include="log4net" Version="2.0.12" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
 </Project>

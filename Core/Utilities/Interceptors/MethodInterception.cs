@@ -1,7 +1,9 @@
 ﻿using Castle.DynamicProxy;
+using Core.CrossCuttingConcerns.Logging.Log4Net.Loggers;
 using Core.Events.Abstract;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
+using Core.Tools;
 using Core.Utilities.FieldDeviceIdentifier;
 using System;
 using System.Collections.Generic;
@@ -31,7 +33,7 @@ namespace Core.Utilities.Interceptors
                 {
                     invocation.Proceed();
                     var result = invocation.ReturnValue as Task;
-                    if (result.Exception!=null)
+                    if ( result!=null && result.Exception!=null)
                     {
                         throw result.Exception;
                     }
@@ -53,6 +55,7 @@ namespace Core.Utilities.Interceptors
             }
             catch (Exception ex)
             {
+                LogException(invocation, ex);
                 CallSemaphoreSlimRelase(invocation);
             }
         }
@@ -68,6 +71,12 @@ namespace Core.Utilities.Interceptors
                 DataTransmissionParameterHolder dataTransmissionParameterHolder = (DataTransmissionParameterHolder)invocation.Arguments[0];
                 dataTransmissionParameterHolder.SemaphoreSlimT.Release();
             }
+        }
+
+        private static void LogException(IInvocation invocation, Exception exception)
+        {
+            CommonExceptionLogger commonExceptionLogger = new CommonExceptionLogger(typeof(FileLogger));
+            commonExceptionLogger.Log(invocation, exception);
         }
     }
 }
