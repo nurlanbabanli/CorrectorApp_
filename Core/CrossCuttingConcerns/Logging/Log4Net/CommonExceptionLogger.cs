@@ -1,13 +1,14 @@
 ﻿using Castle.DynamicProxy;
 using Core.CrossCuttingConcerns.Logging;
 using Core.CrossCuttingConcerns.Logging.Log4Net;
+using Core.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Tools
+namespace Core.CrossCuttingConcerns.Logging.Log4Net
 {
     public class CommonExceptionLogger
     {

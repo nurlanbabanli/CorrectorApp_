@@ -59,12 +59,14 @@ namespace FieldDataAccess.Concrete.Modbus
                 result.Add(_fieldHourlyParameter);
                 for (int k = 0; k < 10000; k++)
                 {
-                    for (int l = 0; l < 1000; l++)
+                    for (int l = 0; l < 100; l++)
                     {
                         int g = (k + l) * l;
                     }
-                }              
-            }                     
+                   
+                }
+                 Thread.Sleep(2);
+            }
             return result;
         }
 

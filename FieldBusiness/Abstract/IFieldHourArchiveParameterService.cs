@@ -1,5 +1,6 @@
 ﻿using Core.ActionReports;
 using Core.Events.Abstract;
+using Core.Results.Abstract;
 using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using FieldEntities.Concrete;

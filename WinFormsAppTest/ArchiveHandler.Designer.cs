@@ -58,7 +58,7 @@ namespace WinFormsAppTest
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.lblId);
             this.Name = "ArchiveHandler";
-            this.Size = new System.Drawing.Size(183, 75);
+            this.Size = new System.Drawing.Size(186, 78);
             this.ResumeLayout(false);
             this.PerformLayout();
 

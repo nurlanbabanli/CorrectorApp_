@@ -23,7 +23,10 @@ namespace WinFormsAppTest
         {
             var deviceParameters = new DeviceParameters();
             deviceParameters.Id = archiveHandler._correctorMaster.Id;
-            deviceParameters.IpAddresss = archiveHandler._correctorMaster.IpAddresss;
+            //deviceParameters.IpAddresss = archiveHandler._correctorMaster.IpAddresss;
+            deviceParameters.IpAddresss = "10.23.33.2";
+            deviceParameters.DeviceType = "EK220";
+            deviceParameters.IsActive = true;
             return deviceParameters;
         }
 

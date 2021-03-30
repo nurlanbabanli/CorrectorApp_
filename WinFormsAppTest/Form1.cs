@@ -55,13 +55,15 @@ namespace WinFormsAppTest
 
         private void GetHourArchiveFromDeviceAsync(DataTransmissionParametersHolderList DeviceParameters, IHourlyArchiveParameterService hourArchiveParameterService)
         {
-            _hourArchiveParameterService = hourArchiveParameterService;
-            _hourArchiveParameterService.GetHourArchivesFromDeviceAsync(DeviceParameters);
+
+                _hourArchiveParameterService = hourArchiveParameterService;
+                _hourArchiveParameterService.GetHourArchivesFromDeviceAsync(DeviceParameters);
+   
         }
         private void Form1_Load(object sender, EventArgs e)
         {
             ArchiveHandler _archiveHandler;
-            for (int i = 0; i < 6; i++)
+            for (int i = 1; i < 10; i++)
             {
                 if (i==100)
                 {

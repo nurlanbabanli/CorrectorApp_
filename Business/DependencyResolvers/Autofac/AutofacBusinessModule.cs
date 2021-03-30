@@ -27,9 +27,6 @@ namespace Business.DependencyResolvers.Autofac
 
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            //var assemblyies = AppDomain.CurrentDomain.GetAssemblies()
-            //    .Where(asm => asm.FullName == "Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"| 
-            //    asm.FullName == "FieldBusiness, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null").ToList();
 
 
             builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces().EnableInterfaceInterceptors(new ProxyGenerationOptions()

@@ -1,15 +1,9 @@
 ﻿using Castle.DynamicProxy;
+using Core.CrossCuttingConcerns.Logging.Log4Net;
 using Core.CrossCuttingConcerns.Logging.Log4Net.Loggers;
-using Core.Events.Abstract;
-using Core.Results.Abstract;
-using Core.Results.Concrete;
-using Core.Tools;
 using Core.Utilities.FieldDeviceIdentifier;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.Utilities.Interceptors
@@ -42,6 +36,7 @@ namespace Core.Utilities.Interceptors
                 {
                     isSuccess = false;
                     OnException(invocation, e);
+                    InMemoryPeriodicLogger.Log(invocation, e);
                     throw;
                 }
                 finally
@@ -56,6 +51,7 @@ namespace Core.Utilities.Interceptors
             catch (Exception ex)
             {
                 LogException(invocation, ex);
+                InMemoryPeriodicLogger.Log(invocation,ex);
                 CallSemaphoreSlimRelase(invocation);
             }
         }

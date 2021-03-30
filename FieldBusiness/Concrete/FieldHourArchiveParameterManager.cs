@@ -1,5 +1,7 @@
 ﻿using Core.ActionReports;
 using Core.Aspects.Autofac.Validation;
+using Core.Results.Abstract;
+using Core.Results.Concrete;
 using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using FieldBusiness.Abstract;
@@ -24,10 +26,10 @@ namespace FieldBusiness.Concrete
             _fieldHourlyArchiveParameterDal = fieldHourlyParameterDal;
         }
 
-        [ValidationAspect(typeof(DataTransmissionParameterHolderValidator))]
+       [ValidationAspect(typeof(DataTransmissionParameterHolderValidator))]
         public async Task GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter)
         {
-            
+            //throw new Exception("NNN");
             List<FieldHourlyArchiveParameter> result = await _fieldHourlyArchiveParameterDal.GetFieldArchiveParametersAsync(deviceParameter);
            
             OnFieldDataIsReadyEvent.Invoke(this, result);

@@ -23,6 +23,7 @@ namespace WinFormsAppTest
             _correctorMaster.Id = TestId;
             lblId.Text = _correctorMaster.Id.ToString();
             Action = ReportProgress;
+            this.BackColor = Color.White;
         }
 
 
@@ -30,6 +31,12 @@ namespace WinFormsAppTest
         {
             progressBar1.Value = progress.Progress;
             lblId.Text = _correctorMaster.Id.ToString() + "  " + progress.Progress.ToString();
+
+            if (progress.StatusId==MessageStatus.Error)
+            {
+                this.BackColor = Color.Red;
+                lblId.Text = progress.Message;
+            }
         }
     }
 }
