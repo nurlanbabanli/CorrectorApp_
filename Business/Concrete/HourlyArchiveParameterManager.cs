@@ -1,16 +1,19 @@
 ﻿using Autofac;
 using Business.Abstract;
 using Business.DependencyResolvers.Autofac;
+using Business.Helper;
 using Business.Helper.Logging;
 using Business.Utilities;
 using Business.ValidationRules.FluentValidation;
 using Core.ActionReports;
 using Core.Aspects.Autofac.Logging;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.FluentValidation;
 using Core.CrossCuttingConcerns.Logging.Log4Net.Loggers;
 using Core.Utilities.FieldDeviceIdentifier;
 using Core.Utilities.InMemoryLoggerParameters;
+using DataAccess.Abstract;
 using Entities.Concrete;
 using FieldBusiness.Abstract;
 using FieldBusiness.Concrete;
@@ -27,11 +30,11 @@ namespace Business.Concrete
 {
     public class HourlyArchiveParameterManager : IHourlyArchiveParameterService
     {
-        List<List<FieldHourlyArchiveParameter>> _fieldHourlyArchiveParameters;
+        List<List<FieldHourlyArchiveParameter>> _fieldHourlyArchiveParameters;//for test1
 
         public HourlyArchiveParameterManager()
         {
-            _fieldHourlyArchiveParameters = new List<List<FieldHourlyArchiveParameter>>();
+            _fieldHourlyArchiveParameters = new List<List<FieldHourlyArchiveParameter>>();//for test1
             InMemoryLoggedMessages.InMemoryHourMesssageLoggerParameters.Clear();
         }
 
@@ -50,7 +53,7 @@ namespace Business.Concrete
                 var result = fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(deviceParameter);
                 fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += FieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
 
-                if(result==null)
+                if (result == null)
                 {
                     deviceParameter.UserInterfaceParametersHolder.ProgressReport.Report(new ProgressStatus
                     { StatusId = MessageStatus.Error, Message = MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryHourMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id) });
@@ -60,8 +63,29 @@ namespace Business.Concrete
 
         private void FieldHourArchiveParameterService_OnFieldDataIsReadyEvent(object sender, List<FieldHourlyArchiveParameter> e)
         {
-            _fieldHourlyArchiveParameters.Add(e);
+            _fieldHourlyArchiveParameters.Add(e);//for test1
+
+            using (var scope = AutofacBusinessContainerBuilder.AutofacBusinessContainer.BeginLifetimeScope())
+            {
+                var hourlyArchiveParameterManager = scope.Resolve<IHourlyArchiveParameterService>();
+                hourlyArchiveParameterManager.AddArchiveParameterTransactionOperation(e);
+            }
         }
 
+
+
+        [TransactionScopeAspect]
+        public void AddArchiveParameterTransactionOperation(List<FieldHourlyArchiveParameter> fieldhourlyArchiveParameter)
+        {
+
+            using (var scope=AutofacBusinessContainerBuilder.AutofacBusinessContainer.BeginLifetimeScope())
+            {
+                IHourlyArchiveParameterDal hourlyArchiveParameterDal = scope.Resolve<IHourlyArchiveParameterDal>();
+                foreach (var parameter in fieldhourlyArchiveParameter)
+                {
+                }
+            }
+        }
     }
+
 }

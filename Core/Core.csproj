@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Aspects\Autofac\Transaction\" />
     <Folder Include="Utilities\Results\" />
   </ItemGroup>
 

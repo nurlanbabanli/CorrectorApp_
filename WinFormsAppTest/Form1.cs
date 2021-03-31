@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Business.Abstract;
+using Business.Concrete;
 using Business.DependencyResolvers.Autofac;
 using Business.Utilities;
 using Core.Utilities.FieldDeviceIdentifier;
@@ -19,6 +20,7 @@ namespace WinFormsAppTest
     public partial class Form1 : Form
     {
         IHourlyArchiveParameterService _hourArchiveParameterService;
+        ICorrectorMasterService _correctorMasterService;
 
         public Form1()
         {
@@ -75,6 +77,23 @@ namespace WinFormsAppTest
                 }
                 archiveHandlerHolder.Controls.Add(_archiveHandler);
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            _correctorMasterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<ICorrectorMasterService>();
+            GetCorrectorMaster();
+        }
+
+        private void GetCorrectorMaster()
+        {
+            List<CorrectorMaster> correctorMasters = _correctorMasterService.GetAll().Data;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            //INurlan nurlan = new Nurlan();
+            //nurlan.MyTest(5);
         }
     }
 }

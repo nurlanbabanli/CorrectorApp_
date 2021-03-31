@@ -11,8 +11,10 @@ namespace Business.Abstract
 {
     public interface ICorrectorMasterService
     {
-        IDataResult<List<CorrectorMaster>> GetAll(Expression<Func<CorrectorMaster, bool>> expression = null);
-        IDataResult<CorrectorMaster> Get(Expression<Func<CorrectorMaster, bool>> expression);
+        IDataResult<List<CorrectorMaster>> GetAll();
+        IDataResult<CorrectorMaster> GetById(int Id);
+        IDataResult<List<CorrectorMaster>> GetByDeviceType(int deviceType);
+        IDataResult<List<CorrectorMaster>> GetByCompany(int companyId);
         IResult Update(CorrectorMaster correctorMaster);
         IResult Add(CorrectorMaster correctorMaster);
     }

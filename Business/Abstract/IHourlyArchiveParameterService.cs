@@ -1,6 +1,8 @@
-﻿using Core.Utilities.FieldDeviceIdentifier;
+﻿using Autofac;
+using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using FieldBusiness.Abstract;
+using FieldEntities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +14,6 @@ namespace Business.Abstract
     public interface IHourlyArchiveParameterService
     {
         Task GetHourArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters);
+        void AddArchiveParameterTransactionOperation(List<FieldHourlyArchiveParameter> hourlyArchiveParameter);
     }
 }
