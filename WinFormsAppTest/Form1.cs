@@ -59,7 +59,7 @@ namespace WinFormsAppTest
         {
 
                 _hourArchiveParameterService = hourArchiveParameterService;
-                _hourArchiveParameterService.GetHourArchivesFromDeviceAsync(DeviceParameters);
+                _hourArchiveParameterService.GetArchivesFromDeviceAsync(DeviceParameters);
    
         }
         private void Form1_Load(object sender, EventArgs e)

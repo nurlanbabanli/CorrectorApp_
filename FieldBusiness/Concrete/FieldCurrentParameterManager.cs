@@ -1,4 +1,6 @@
-﻿using FieldBusiness.Abstract;
+﻿using Core.ActionReports;
+using Core.Events.Results;
+using FieldBusiness.Abstract;
 using FieldEntities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,6 @@ namespace FieldBusiness.Concrete
 {
     public class FieldCurrentParameterManager : IFieldCurrentParameterService
     {
-        public event EventHandler<List<FieldCurrentParameter>> OnFieldDataIsReadyEvent;
+        public event EventHandler<FieldEventResult<FieldCurrentParameter, IProgress<ProgressStatus>>> OnFieldDataIsReadyEvent;
     }
 }

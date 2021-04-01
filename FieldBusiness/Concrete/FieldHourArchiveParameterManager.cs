@@ -1,5 +1,7 @@
 ﻿using Core.ActionReports;
 using Core.Aspects.Autofac.Validation;
+using Core.Events.Abstract;
+using Core.Events.Results;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
 using Core.Utilities.FieldDeviceIdentifier;
@@ -18,21 +20,27 @@ namespace FieldBusiness.Concrete
 {
     public class FieldHourArchiveParameterManager : IFieldHourArchiveParameterService
     {
-        public event EventHandler<List<FieldHourlyArchiveParameter>> OnFieldDataIsReadyEvent;
+        //public event EventHandler<List<FieldHourlyArchiveParameter>> OnFieldDataIsReadyEvent;
+        public event EventHandler<FieldEventResult<FieldHourlyArchiveParameter, IProgress<ProgressStatus>>> OnFieldDataIsReadyEvent;
 
         IFieldHourlyArchiveParameterDal _fieldHourlyArchiveParameterDal;
         public FieldHourArchiveParameterManager(IFieldHourlyArchiveParameterDal fieldHourlyParameterDal)
         {
             _fieldHourlyArchiveParameterDal = fieldHourlyParameterDal;
         }
-
-       [ValidationAspect(typeof(DataTransmissionParameterHolderValidator))]
+      
+        [ValidationAspect(typeof(DataTransmissionParameterHolderValidator))]
         public async Task GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter)
         {
             //throw new Exception("NNN");
             List<FieldHourlyArchiveParameter> result = await _fieldHourlyArchiveParameterDal.GetFieldArchiveParametersAsync(deviceParameter);
+            FieldEventResult<FieldHourlyArchiveParameter, IProgress<ProgressStatus>> fieldEventResult = new FieldEventResult<FieldHourlyArchiveParameter, IProgress<ProgressStatus>>();
+            fieldEventResult.DataList = result;
+            fieldEventResult.Progress = deviceParameter.UserInterfaceParametersHolder.ProgressReport;
+            fieldEventResult.DeviceId = deviceParameter.DeviceParametersHolder.Id;
+
+            OnFieldDataIsReadyEvent.Invoke(this, fieldEventResult);
            
-            OnFieldDataIsReadyEvent.Invoke(this, result);
         }
     }
 }

@@ -65,7 +65,7 @@ namespace FieldDataAccess.Concrete.Modbus
                     }
                    
                 }
-                 Thread.Sleep(2);
+                 Thread.Sleep(200);
             }
             return result;
         }

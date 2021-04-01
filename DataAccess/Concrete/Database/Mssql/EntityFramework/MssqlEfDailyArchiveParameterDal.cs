@@ -1,4 +1,6 @@
-﻿using DataAccess.Abstract;
+﻿using Core.DataAccess.Mssql.EntityFramework;
+using DataAccess.Abstract;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Concrete.Database.Mssql.EntityFramework
 {
-    public class MssqlEfDailyArchiveParameterDal:IDailyArchiveParameterDal
+    public class MssqlEfDailyArchiveParameterDal:EfEntityRepositoryBase<DailyArchiveParameter,MssqlCorrectorContext>, IDailyArchiveParameterDal
     {
     }
 }

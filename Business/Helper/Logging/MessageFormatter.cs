@@ -13,7 +13,7 @@ namespace Business.Helper.Logging
         {
             foreach (var item in inMemoryLoggerParameters)
             {
-                if (item.DeviceId == id)
+                if (item.DeviceId == id || item.DeviceId==0)
                 {
                     return item.Messages;
                 }

@@ -1,4 +1,5 @@
-﻿using Core.Events.Abstract;
+﻿using Core.ActionReports;
+using Core.Events.Abstract;
 using FieldEntities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FieldBusiness.Abstract
 {
-    public interface IFieldMonthlyType1ArchiveParameterService : IResultEvent<FieldMonthlyType1ArchiveParameter>
+    public interface IFieldMonthlyType1ArchiveParameterService : IResultEvent<FieldMonthlyType1ArchiveParameter, IProgress<ProgressStatus>>
     {
     }
 }

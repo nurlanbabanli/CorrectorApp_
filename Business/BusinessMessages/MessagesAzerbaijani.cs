@@ -19,5 +19,6 @@ namespace Business.BusinessMessages
         public static string UpdatedDeviceNameIsExists { get { return "Göndərilən adla başqa bir qurğu mövcuddur."; } }
         public static string UpdatedDeviceSerialNumberIsExists { get { return "Göndərilən seriya nömrəsi ilə başqa bir qurğu mövcuddur."; } }
         public static string UpdatedDeviceIpAddressIsExists { get { return "Göndərilən Ip adresi başqa bir qurğuda mövcuddur."; } }
+        public static string DatabaseHourArchiveComonError { get { return "Məlumatları database ə daxil edərkən xəta yarandı."; } }
     }
 }

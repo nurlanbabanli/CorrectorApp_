@@ -16,7 +16,7 @@ namespace DataAccess.Concrete.Database.Mssql.EntityFramework
             optionsBuilder.UseSqlServer(DatabaseConnectionParameters.MssqlConectionString);
         }
         public DbSet<CorrectorMaster> CorrectorMasters { get; set; }
-        //public DbSet<HourlyArchiveParameter> HourlyArchiveParameters { get; set; }
+        public DbSet<HourlyArchiveParameter> HourlyArchiveParameters { get; set; }
         //public DbSet<DailyArchiveParameter> DailyArchiveParameters { get; set; }
         //public DbSet<EventArchiveParameter> EventArchiveParameters { get; set; }
         //public DbSet<MonthlyType1ArchiveParameter> MonthlyType1ArchiveParameters { get; set; }

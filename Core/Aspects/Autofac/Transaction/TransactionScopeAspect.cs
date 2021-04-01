@@ -1,4 +1,6 @@
 ﻿using Castle.DynamicProxy;
+using Core.CrossCuttingConcerns.Logging.Log4Net;
+using Core.CrossCuttingConcerns.Logging.Log4Net.Loggers;
 using Core.Utilities.Interceptors;
 using System;
 using System.Collections.Generic;
@@ -20,9 +22,10 @@ namespace Core.Aspects.Autofac.Transaction
                     invocation.Proceed();
                     transactionScope.Complete();
                 }
-                catch (System.Exception)
+                catch (System.Exception ex)
                 {
                     transactionScope.Dispose();
+                    InMemoryPeriodicLogger.Log(invocation, ex);
                     throw;
                 }
             }

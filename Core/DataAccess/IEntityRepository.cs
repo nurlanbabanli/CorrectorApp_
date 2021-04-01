@@ -11,10 +11,9 @@ namespace Core.DataAccess
 {
     public interface IEntityRepository<TData> where TData : class, IEntity, new()
     {
-        IDataResult<List<TData>> GetAll(Expression<Func<TData, bool>> expression = null);
-        IDataResult<TData> Get(Expression<Func<TData, bool>> expression);
-        IResult Add(TData entity);
-        IResult Update(TData entity);
-        IResult Delete(TData entity);
+        List<TData> GetAll(Expression<Func<TData, bool>> expression = null);
+        TData Get(Expression<Func<TData, bool>> expression);
+        void Add(TData entity);
+        void Delete(TData entity);
     }
 }
