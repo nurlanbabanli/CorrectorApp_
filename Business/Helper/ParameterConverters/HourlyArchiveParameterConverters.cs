@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Helper
+namespace Business.Helper.ParameterConverters
 {
     public class HourlyArchiveParameterConverters
     {

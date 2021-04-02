@@ -8,6 +8,6 @@ namespace Core.Utilities.InMemoryLoggerParameters
 {
     public static class InMemoryLoggedMessages
     {
-        public static List<InMemoryLoggerParameter> InMemoryHourMesssageLoggerParameters = new List<InMemoryLoggerParameter>();
+        public static List<InMemoryLoggerParameter> InMemoryMesssageLoggerParameters = new List<InMemoryLoggerParameter>();
     }
 }

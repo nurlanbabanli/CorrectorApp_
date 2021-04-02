@@ -10,6 +10,8 @@ namespace Entities.Concrete
     public class MonthlyType1ArchiveParameter : IEntity
     {
         public int DeviceId { get; set; }
+        public DateTime HistoryDateTime { get; set; }
+        public int AbNo { get; set; }
 
         // Rest of MonthlyType1 archive parameters will be added later
     }

@@ -25,9 +25,37 @@ namespace Business.DependencyResolvers.Autofac
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<HourlyArchiveParameterManager>().As<IHourlyArchiveParameterService>().InstancePerDependency();
-            builder.RegisterType<FieldHourArchiveParameterManager>().As<IFieldHourArchiveParameterService>().InstancePerDependency();
+            builder.RegisterType<FieldHourlyArchiveParameterManager>().As<IFieldHourlyArchiveParameterService>().InstancePerDependency();
             builder.RegisterType<MbFieldHourlyArchiveParameterDal>().As<IFieldHourlyArchiveParameterDal>().InstancePerDependency();
             builder.RegisterType<MssqlEfHourlyArchiveParameterDal>().As<IHourlyArchiveParameterDal>().InstancePerDependency();
+
+            builder.RegisterType<DailyArchiveParameterManager>().As<IDailyArchiveParameterService>().InstancePerDependency();
+            builder.RegisterType<FieldDailyArchiveParameterManager>().As<IFieldDailyArchiveParameterService>().InstancePerDependency();
+            builder.RegisterType<MbFieldDailyArchiveParameterDal>().As<IFieldDailyArchiveParameterDal>().InstancePerDependency();
+            builder.RegisterType<MssqlEfDailyArchiveParameterDal>().As<IDailyArchiveParameterDal>().InstancePerDependency();
+
+            builder.RegisterType<EventArchiveParameterManager>().As<IEventArchiveParameterService>().InstancePerDependency();
+            builder.RegisterType<FieldEventArchiveParameterManager>().As<IFieldEventArchiveParameterService>().InstancePerDependency();
+            builder.RegisterType<MbFieldEventArchiveParameterDal>().As<IFieldEventArchiveParameterDal>().InstancePerDependency();
+            builder.RegisterType<MssqlEfEventArchiveParameterDal>().As<IEventArchiveParameterDal>().InstancePerDependency();
+
+            builder.RegisterType<MonthlyType1ArchiveParameterManager>().As<IMonthlyType1ArchiveParameterService>().InstancePerDependency();
+            builder.RegisterType<FieldMonthlyType1ArchiveParameterManager>().As<IFieldMonthlyType1ArchiveParameterService>().InstancePerDependency();
+            builder.RegisterType<MbFieldMonthlyType1ArchiveParameterDal>().As<IFieldMonthlyType1ArchiveParameterDal>().InstancePerDependency();
+            builder.RegisterType<MssqlEfMonthlyType1ArchiveParameterDal>().As<IMonthlyType1ArchiveParameterDal>().InstancePerDependency();
+
+            builder.RegisterType<MonthlyType2ArchiveParameterManager>().As<IMonthlyType2ArchiveParameterService>().InstancePerDependency();
+            builder.RegisterType<FieldMonthlyType2ArchiveParameterManager>().As<IFieldMonthlyType2ArchiveParameterService>().InstancePerDependency();
+            builder.RegisterType<MbFieldMonthlyType2ArchiveParameterDal>().As<IFieldMonthlyType2ArchiveParameterDal>().InstancePerDependency();
+            builder.RegisterType<MbFieldMonthlyType2ArchivePart1PArameterDal>().As<IFieldMonthlyType2ArchivePart1ParameterDal>().InstancePerDependency();
+            builder.RegisterType<MbFieldMonthlyType2ArchivePart2PArameterDal>().As<IFieldMonthlyType2ArchivePart2ParameterDal>().InstancePerDependency();
+            builder.RegisterType<MbFieldMonthlyType2ArchivePart3PArameterDal>().As<IFieldMonthlyType2ArchivePart3ParameterDal>().InstancePerDependency();
+            builder.RegisterType<MssqlEfMonthlyType2ArchiveParameterDal>().As<IMonthlyType2ArchiveParameterDal>().InstancePerDependency();           
+
+            builder.RegisterType<CurrentParameterManager>().As<ICurrentParameterService>().InstancePerDependency();
+            builder.RegisterType<FieldCurrentParameterManager>().As<IFieldCurrentParameterService>().InstancePerDependency();
+            builder.RegisterType<MbFieldCurrentParameterDal>().As<IFieldCurrentParameterDal>().InstancePerDependency();
+
             builder.RegisterType<CorrectorMasterManager>().As<ICorrectorMasterService>().InstancePerDependency();
             builder.RegisterType<MssqlEfCorrectorMasterDal>().As<ICorrectorMasterDal>().InstancePerDependency();
 

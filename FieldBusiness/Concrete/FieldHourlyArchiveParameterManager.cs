@@ -18,29 +18,28 @@ using System.Threading.Tasks;
 
 namespace FieldBusiness.Concrete
 {
-    public class FieldHourArchiveParameterManager : IFieldHourArchiveParameterService
+    public class FieldHourlyArchiveParameterManager : IFieldHourlyArchiveParameterService
     {
-        //public event EventHandler<List<FieldHourlyArchiveParameter>> OnFieldDataIsReadyEvent;
         public event EventHandler<FieldEventResult<FieldHourlyArchiveParameter, IProgress<ProgressStatus>>> OnFieldDataIsReadyEvent;
 
         IFieldHourlyArchiveParameterDal _fieldHourlyArchiveParameterDal;
-        public FieldHourArchiveParameterManager(IFieldHourlyArchiveParameterDal fieldHourlyParameterDal)
+        public FieldHourlyArchiveParameterManager(IFieldHourlyArchiveParameterDal fieldHourlyParameterDal)
         {
             _fieldHourlyArchiveParameterDal = fieldHourlyParameterDal;
         }
       
-        [ValidationAspect(typeof(DataTransmissionParameterHolderValidator))]
+        [ValidationAspect(typeof(ArchiveDataTransmissionParameterHolderValidator),Priority =1)]
         public async Task GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter)
         {
             //throw new Exception("NNN");
             List<FieldHourlyArchiveParameter> result = await _fieldHourlyArchiveParameterDal.GetFieldArchiveParametersAsync(deviceParameter);
-            FieldEventResult<FieldHourlyArchiveParameter, IProgress<ProgressStatus>> fieldEventResult = new FieldEventResult<FieldHourlyArchiveParameter, IProgress<ProgressStatus>>();
-            fieldEventResult.DataList = result;
-            fieldEventResult.Progress = deviceParameter.UserInterfaceParametersHolder.ProgressReport;
-            fieldEventResult.DeviceId = deviceParameter.DeviceParametersHolder.Id;
-
-            OnFieldDataIsReadyEvent.Invoke(this, fieldEventResult);
-           
+            var fieldEventResult = new FieldEventResult<FieldHourlyArchiveParameter, IProgress<ProgressStatus>>()
+            {
+                DataList = result,
+                Progress = deviceParameter.UserInterfaceParametersHolder.ProgressReport,
+                DeviceId= deviceParameter.DeviceParametersHolder.Id
+            };
+            OnFieldDataIsReadyEvent.Invoke(this, fieldEventResult);           
         }
     }
 }

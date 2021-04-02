@@ -18,7 +18,7 @@ namespace Core.CrossCuttingConcerns.Logging.Log4Net.Loggers
                 if (argument.GetType()==typeof(DataTransmissionParameterHolder))
                 {
                     DataTransmissionParameterHolder dataTransmissionParameterHolder = (DataTransmissionParameterHolder)argument;
-                    InMemoryLoggedMessages.InMemoryHourMesssageLoggerParameters.Add(new InMemoryLoggerParameter { DeviceId = dataTransmissionParameterHolder.DeviceParametersHolder.Id, Messages = exception.Message });    
+                    InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Add(new InMemoryLoggerParameter { DeviceId = dataTransmissionParameterHolder.DeviceParametersHolder.Id, Messages = exception.Message });    
                     break;
                 }
             }

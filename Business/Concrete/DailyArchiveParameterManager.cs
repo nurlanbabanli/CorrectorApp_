@@ -11,6 +11,7 @@ using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Log4Net.Loggers;
+using Core.Events.Results;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
 using Core.Utilities.FieldDeviceIdentifier;
@@ -27,18 +28,18 @@ using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
-    public class EventArchiveParameterManager : IEventArchiveParameterService
+    public class DailyArchiveParameterManager : IDailyArchiveParameterService
     {
-        IEventArchiveParameterDal _eventArchiveParameterDal;
-        public List<List<FieldEventArchiveParameter>> _fieldEventArchiveParameters;
-        public EventArchiveParameterManager(IEventArchiveParameterDal eventArchiveParameterDal)
+        IDailyArchiveParameterDal _dailyArchiveParameterDal;
+        public List<List<FieldDailyArchiveParameter>> _fieldDailyArchiveParameters;
+        public DailyArchiveParameterManager(IDailyArchiveParameterDal dailyArchiveParameterDal)
         {
-            _eventArchiveParameterDal = eventArchiveParameterDal;
+            _dailyArchiveParameterDal = dailyArchiveParameterDal;
         }
 
-        public IDataResult<List<EventArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(int deviceId,DateTime beginDate, DateTime endDate)
+        public IDataResult<List<DailyArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(int deviceId, DateTime beginDate, DateTime endDate)
         {
-            return new SuccessDataResult<List<EventArchiveParameter>>(_eventArchiveParameterDal.GetAll(ep => ep.HistoryDateTime >= beginDate && ep.HistoryDateTime <= endDate && ep.DeviceId==deviceId));
+            return new SuccessDataResult<List<DailyArchiveParameter>>(_dailyArchiveParameterDal.GetAll(dp => dp.HistoryDateTime >= beginDate && dp.HistoryDateTime <= endDate && dp.DeviceId == deviceId));
         }
 
         [ValidationAspect(typeof(DataTransmissionParametersHolderListValidator), Priority = 1)]
@@ -46,15 +47,15 @@ namespace Business.Concrete
         public async Task GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters)
         {
             InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Clear();
-            _fieldEventArchiveParameters.Clear();
+            _fieldDailyArchiveParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
             foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
-            {
+            {               
                 deviceParameter.SemaphoreSlimT = semaphoreSlim;
                 await deviceParameter.SemaphoreSlimT.WaitAsync();
-                var fieldEventArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldEventArchiveParameterService>();
-                var result = fieldEventArchiveParameterService.GetEventArchiveFromDeviceAsync(deviceParameter);
-                fieldEventArchiveParameterService.OnFieldDataIsReadyEvent += FieldEventArchiveParameterService_OnFieldDataIsReadyEvent;
+                var fieldDailyArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldDailyArchiveParameterService>();
+                var result = fieldDailyArchiveParameterService.GetDailyArchiveFromDeviceAsync(deviceParameter);
+                fieldDailyArchiveParameterService.OnFieldDataIsReadyEvent += FieldDailyArchiveParameterService_OnFieldDataIsReadyEvent;
 
                 if (result == null)
                 {
@@ -64,38 +65,38 @@ namespace Business.Concrete
             }
         }
 
-        private void FieldEventArchiveParameterService_OnFieldDataIsReadyEvent(object sender, Core.Events.Results.FieldEventResult<FieldEventArchiveParameter, IProgress<Core.ActionReports.ProgressStatus>> e)
+        private void FieldDailyArchiveParameterService_OnFieldDataIsReadyEvent(object sender, FieldEventResult<FieldDailyArchiveParameter, IProgress<ProgressStatus>> e)
         {
-            _fieldEventArchiveParameters.Add(e.DataList);
+            _fieldDailyArchiveParameters.Add(e.DataList);
 
             using (var scope = AutofacBusinessContainerBuilder.AutofacBusinessContainer.BeginLifetimeScope())
             {
-                var eventArchiveParameterManager = scope.Resolve<IEventArchiveParameterService>();
-                var result = eventArchiveParameterManager.AddArchiveParameterTransactionOperation(e.DataList);
+                var dailyArchiveParameterManager = scope.Resolve<IDailyArchiveParameterService>();
+                var result = dailyArchiveParameterManager.AddArchiveParameterTransactionOperation(e.DataList);
 
                 if (result == null)
                 {
-                    ErrorProgressReport(e.Progress, Messages.DatabaseEventArchiveComonError);
+                    ErrorProgressReport(e.Progress, Messages.DatabaseDailyArchiveComonError);
                 }
             }
         }
 
         [TransactionScopeAspect(Priority = 1)]
         [LogAspect(typeof(FileLogger), Priority = 2)]
-        public IResult AddArchiveParameterTransactionOperation(List<FieldEventArchiveParameter> fieldEventArchiveParameters)
+        public IResult AddArchiveParameterTransactionOperation(List<FieldDailyArchiveParameter> fieldDailyArchiveParameters)
         {
             using (var scope = AutofacBusinessContainerBuilder.AutofacBusinessContainer.BeginLifetimeScope())
             {
-                IEventArchiveParameterDal eventArchiveParameterDal = scope.Resolve<IEventArchiveParameterDal>();
-                foreach (var parameter in fieldEventArchiveParameters)
+                IDailyArchiveParameterDal dailyArchiveParameterDal = scope.Resolve<IDailyArchiveParameterDal>();
+                foreach (var parameter in fieldDailyArchiveParameters)
                 {
-                    var eventArchiveParameter = EventArchiveParameterConverters.ConvertToDatabaseFormat(parameter);
-                    var IsCurrentArchiveRowExists = eventArchiveParameterDal.Get(hp => hp.HistoryDateTime == eventArchiveParameter.HistoryDateTime && hp.AbNo == eventArchiveParameter.AbNo && hp.DeviceId==eventArchiveParameter.DeviceId);
+                    var dailyArchiveParameter = DailyArchiveParameterConverters.ConvertToDatabaseFormat(parameter);
+                    var IsCurrentArchiveRowExists = dailyArchiveParameterDal.Get(dp => dp.HistoryDateTime == dailyArchiveParameter.HistoryDateTime && dp.AbNo == dailyArchiveParameter.AbNo && dp.DeviceId==dailyArchiveParameter.DeviceId);
                     if (IsCurrentArchiveRowExists != null)
                     {
-                        eventArchiveParameterDal.Delete(IsCurrentArchiveRowExists);
+                        dailyArchiveParameterDal.Delete(IsCurrentArchiveRowExists);
                     }
-                    eventArchiveParameterDal.Add(eventArchiveParameter);
+                    dailyArchiveParameterDal.Add(dailyArchiveParameter);
                 }
             }
             return new SuccessResult();

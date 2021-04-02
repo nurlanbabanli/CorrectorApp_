@@ -10,6 +10,8 @@ namespace Entities.Concrete
     public class DailyArchiveParameter : IEntity
     {
         public int DeviceId { get; set; }
+        public DateTime HistoryDateTime { get; set; }
+        public int AbNo { get; set; }
 
         // Rest of Daily archive parameters will be added later
     }

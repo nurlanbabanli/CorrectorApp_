@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FieldBusiness.Abstract
 {
-    public interface IFieldHourArchiveParameterService : IResultEvent<FieldHourlyArchiveParameter,IProgress<ProgressStatus>>
+    public interface IFieldHourlyArchiveParameterService : IResultEvent<FieldHourlyArchiveParameter,IProgress<ProgressStatus>>
     {
         Task GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter);
     }

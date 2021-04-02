@@ -13,10 +13,7 @@ using System.Threading.Tasks;
 namespace FieldDataAccess.Concrete.Modbus
 {
     public class MbFieldHourlyArchiveParameterDal : IFieldHourlyArchiveParameterDal
-    {
-        
-        FieldHourlyArchiveParameter _fieldHourlyParameter;
-
+    {              
         public MbFieldHourlyArchiveParameterDal()
         {
 
@@ -48,15 +45,16 @@ namespace FieldDataAccess.Concrete.Modbus
 
         private List<FieldHourlyArchiveParameter> MyTestMethod1(DataTransmissionParameterHolder deviceParameter)
         {
+            FieldHourlyArchiveParameter fieldHourlyParameter;
             List<FieldHourlyArchiveParameter> result = new List<FieldHourlyArchiveParameter>();
             for (int i = 0; i < 100; i++)
             {
-                _fieldHourlyParameter = new FieldHourlyArchiveParameter();
-                _fieldHourlyParameter.ABNo = deviceParameter.DeviceParametersHolder.Id * 10 + i;
-                _fieldHourlyParameter.DeviceId = deviceParameter.DeviceParametersHolder.Id;
+                fieldHourlyParameter = new FieldHourlyArchiveParameter();
+                fieldHourlyParameter.ABNo = deviceParameter.DeviceParametersHolder.Id * 10 + i;
+                fieldHourlyParameter.DeviceId = deviceParameter.DeviceParametersHolder.Id;
 
                 deviceParameter.UserInterfaceParametersHolder.ProgressReport.Report(new ProgressStatus { Progress = i });
-                result.Add(_fieldHourlyParameter);
+                result.Add(fieldHourlyParameter);
                 for (int k = 0; k < 10000; k++)
                 {
                     for (int l = 0; l < 100; l++)

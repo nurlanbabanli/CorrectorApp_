@@ -71,7 +71,7 @@ namespace Core.Utilities.Interceptors
 
         private static void LogException(IInvocation invocation, Exception exception)
         {
-            CommonExceptionLogger commonExceptionLogger = new CommonExceptionLogger(typeof(ExFileLogger));
+            CommonExceptionLogger commonExceptionLogger = new CommonExceptionLogger(typeof(ExceptionFileLogger));
             commonExceptionLogger.Log(invocation, exception);
         }
     }

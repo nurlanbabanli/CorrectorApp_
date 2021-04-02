@@ -15,7 +15,7 @@ namespace Business.Abstract
     public interface IHourlyArchiveParameterService
     {
         Task GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters);
-        IResult AddArchiveParameterTransactionOperation(List<FieldHourlyArchiveParameter> hourlyArchiveParameter);
-        IDataResult<List<HourlyArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(DateTime beginDate, DateTime endDate);
+        IResult AddArchiveParameterTransactionOperation(List<FieldHourlyArchiveParameter> hourlyArchiveParameters);
+        IDataResult<List<HourlyArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(int deviceId,DateTime beginDate, DateTime endDate);
     }
 }

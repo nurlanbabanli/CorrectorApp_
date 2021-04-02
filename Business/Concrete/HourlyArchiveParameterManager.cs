@@ -2,16 +2,14 @@
 using Business.Abstract;
 using Business.BusinessMessages;
 using Business.DependencyResolvers.Autofac;
-using Business.Helper;
 using Business.Helper.Logging;
+using Business.Helper.ParameterConverters;
 using Business.Utilities;
 using Business.ValidationRules.FluentValidation;
 using Core.ActionReports;
-using Core.Aspects.Autofac.Exception;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
-using Core.CrossCuttingConcerns.FluentValidation;
 using Core.CrossCuttingConcerns.Logging.Log4Net.Loggers;
 using Core.Events.Results;
 using Core.Results.Abstract;
@@ -21,8 +19,6 @@ using Core.Utilities.InMemoryLoggerParameters;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using FieldBusiness.Abstract;
-using FieldBusiness.Concrete;
-using FieldDataAccess.Concrete.Modbus;
 using FieldEntities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -45,9 +41,9 @@ namespace Business.Concrete
             
         }
 
-        public IDataResult<List<HourlyArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(DateTime beginDate, DateTime endDate)
+        public IDataResult<List<HourlyArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(int deviceID,DateTime beginDate, DateTime endDate)
         {
-            return new SuccessDataResult<List<HourlyArchiveParameter>>(_hourlyArchiveParameterDal.GetAll(d => d.HistoryDateTime >= beginDate && d.HistoryDateTime <= endDate));
+            return new SuccessDataResult<List<HourlyArchiveParameter>>(_hourlyArchiveParameterDal.GetAll(hp => hp.HistoryDateTime >= beginDate && hp.HistoryDateTime <= endDate && hp.DeviceId==deviceID));
         }
 
 
@@ -55,7 +51,7 @@ namespace Business.Concrete
         [LogAspect(typeof(FileLogger), Priority = 2)]
         public async Task GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters)
         {
-            InMemoryLoggedMessages.InMemoryHourMesssageLoggerParameters.Clear();
+            InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Clear();
             _fieldHourlyArchiveParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
             foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
@@ -63,14 +59,14 @@ namespace Business.Concrete
                 //throw new Exception("Nurlan");
                 deviceParameter.SemaphoreSlimT = semaphoreSlim;
                 await deviceParameter.SemaphoreSlimT.WaitAsync();
-                var fieldHourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldHourArchiveParameterService>();
+                var fieldHourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldHourlyArchiveParameterService>();
                 var result = fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(deviceParameter);
                 fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += FieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
 
                 if (result == null)
                 {
                     ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
-                     MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryHourMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
+                     MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
                 }
             }
         }
@@ -93,15 +89,15 @@ namespace Business.Concrete
       
         [TransactionScopeAspect(Priority = 1)]
         [LogAspect(typeof(FileLogger), Priority = 2)]
-        public IResult AddArchiveParameterTransactionOperation(List<FieldHourlyArchiveParameter> fieldhourlyArchiveParameter)
+        public IResult AddArchiveParameterTransactionOperation(List<FieldHourlyArchiveParameter> fieldhourlyArchiveParameters)
         {
             using (var scope = AutofacBusinessContainerBuilder.AutofacBusinessContainer.BeginLifetimeScope())
             {
                 IHourlyArchiveParameterDal hourlyArchiveParameterDal = scope.Resolve<IHourlyArchiveParameterDal>();
-                foreach (var parameter in fieldhourlyArchiveParameter)
+                foreach (var parameter in fieldhourlyArchiveParameters)
                 {
                     var hourlyArchiveParameter = HourlyArchiveParameterConverters.ConvertToDatabaseFormat(parameter);
-                    var IsCurrentArchiveRowExists = hourlyArchiveParameterDal.Get(hp => hp.HistoryDateTime == hourlyArchiveParameter.HistoryDateTime && hp.AbNo == hourlyArchiveParameter.AbNo);
+                    var IsCurrentArchiveRowExists = hourlyArchiveParameterDal.Get(hp => hp.HistoryDateTime == hourlyArchiveParameter.HistoryDateTime && hp.AbNo == hourlyArchiveParameter.AbNo && hp.DeviceId==hourlyArchiveParameter.DeviceId);
                     if (IsCurrentArchiveRowExists!=null)
                     {
                         hourlyArchiveParameterDal.Delete(IsCurrentArchiveRowExists);
