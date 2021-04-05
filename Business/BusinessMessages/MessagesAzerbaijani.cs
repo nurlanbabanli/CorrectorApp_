@@ -24,5 +24,15 @@ namespace Business.BusinessMessages
         public static string DatabaseDailyArchiveComonError { get { return "Günlük arxivi məlumatlarını database ə daxil edərkən xəta yarandı."; } }
         public static string DatabaseMonthlyType1ArchiveComonError { get { return "Aylıq 1 arxivi məlumatlarını database ə daxil edərkən xəta yarandı."; } }
         public static string DatabaseMonthlyType2ArchiveComonError { get { return "Aylıq 2 arxivi məlumatlarını database ə daxil edərkən xəta yarandı."; } }
+        public static string UserIdIsExists { get { return "Göndərilən user login adı mövcuddur. Başqasını seçin."; } }
+        public static string UserUpdated { get { return "İstifadəçi üzərində dəyişikliklər edildi."; } }
+        public static string UserNotFound { get { return "İstifadəçi mövcud deyil."; } }
+        public static string PasswordError { get { return "İstifadəçi şifrəsi düzgün deyil."; } }
+        public static string SuccessfullLogin { get { return "İstifadəçi sistemə daxil oldu."; } }
+        public static string UserRegistered { get { return "Yeni istifadəçi sistemə əlavə edildi."; } }
+        public static string UserIdIsNull { get { return "Login boş olmamalıdır."; } }
+        public static string PassworIsNull { get { return "Şifrə boş olmamalıdır."; } }
+        public static string AuthorizationDenied { get { return "Bu əməliyyat üçün icazəniz yoxdur."; } }
+        public static string ActiveUserNotFound { get { return "Hazırda sistemdə aktiv istifadəçi mövcud deyil."; } }
     }
 }

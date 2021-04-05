@@ -18,7 +18,7 @@ namespace Core.DataAccess.Mssql.EntityFramework
             using (var context=new TContext())
             {
                 var addedEntity = context.Entry(entity);
-                addedEntity.State = EntityState.Added;
+               // addedEntity.State = EntityState.Added;
                 context.SaveChanges();
             }
         }
@@ -28,7 +28,7 @@ namespace Core.DataAccess.Mssql.EntityFramework
             using (var context=new TContext())
             {
                 var deletedEntity = context.Remove(entity);
-                deletedEntity.State = EntityState.Deleted;
+                //deletedEntity.State = EntityState.Deleted;
                 context.SaveChanges();
             }
         }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Business.Helper.RuleChecker
 {
-    public static class CorrectorMasterRules
+    public class CorrectorMasterRules
     {
         public static IResult CheckIfCorrectorIdExist(ICorrectorMasterDal correctorMasterDal, int id)
         {

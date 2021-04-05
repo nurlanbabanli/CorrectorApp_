@@ -36,20 +36,25 @@ namespace Business.Concrete
         {
             InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
-            foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
-            {
-                deviceParameter.SemaphoreSlimT = semaphoreSlim;
-                await deviceParameter.SemaphoreSlimT.WaitAsync();
-                var fieldCurrentParameterService= AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldCurrentParameterService>();
-                var result = fieldCurrentParameterService.GetCurrentParametFromDeviceAsync(deviceParameter);
-                fieldCurrentParameterService.OnFieldDataIsReadyEvent += FieldCurrentParameterService_OnFieldDataIsReadyEvent;
 
-                if (result == null)
+            await Task.Run(async () =>
+            {
+                foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
                 {
-                    ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
-                     MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
+                    deviceParameter.SemaphoreSlimT = semaphoreSlim;
+                    await deviceParameter.SemaphoreSlimT.WaitAsync();
+                    var fieldCurrentParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldCurrentParameterService>();
+                    var result = fieldCurrentParameterService.GetCurrentParametFromDeviceAsync(deviceParameter);
+                    fieldCurrentParameterService.OnFieldDataIsReadyEvent += FieldCurrentParameterService_OnFieldDataIsReadyEvent;
+
+                    if (result == null)
+                    {
+                        ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
+                         MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
+                    }
                 }
-            }
+            });
+
         }
 
         private void FieldCurrentParameterService_OnFieldDataIsReadyEvent(object sender, FieldEventResult<FieldCurrentParameter, IProgress<ProgressStatus>> e)

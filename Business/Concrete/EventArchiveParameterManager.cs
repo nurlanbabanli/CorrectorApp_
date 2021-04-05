@@ -48,20 +48,24 @@ namespace Business.Concrete
             InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Clear();
             _fieldEventArchiveParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
-            foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
-            {
-                deviceParameter.SemaphoreSlimT = semaphoreSlim;
-                await deviceParameter.SemaphoreSlimT.WaitAsync();
-                var fieldEventArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldEventArchiveParameterService>();
-                var result = fieldEventArchiveParameterService.GetEventArchiveFromDeviceAsync(deviceParameter);
-                fieldEventArchiveParameterService.OnFieldDataIsReadyEvent += FieldEventArchiveParameterService_OnFieldDataIsReadyEvent;
 
-                if (result == null)
+            await Task.Run( async() =>
+            {
+                foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
                 {
-                    ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
-                     MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
+                    deviceParameter.SemaphoreSlimT = semaphoreSlim;
+                    await deviceParameter.SemaphoreSlimT.WaitAsync();
+                    var fieldEventArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldEventArchiveParameterService>();
+                    var result = fieldEventArchiveParameterService.GetEventArchiveFromDeviceAsync(deviceParameter);
+                    fieldEventArchiveParameterService.OnFieldDataIsReadyEvent += FieldEventArchiveParameterService_OnFieldDataIsReadyEvent;
+
+                    if (result == null)
+                    {
+                        ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
+                         MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
+                    }
                 }
-            }
+            });
         }
 
         private void FieldEventArchiveParameterService_OnFieldDataIsReadyEvent(object sender, Core.Events.Results.FieldEventResult<FieldEventArchiveParameter, IProgress<Core.ActionReports.ProgressStatus>> e)

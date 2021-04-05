@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.BusinessMessages;
 using Business.DependencyResolvers.Autofac;
 using Business.Helper.Logging;
@@ -11,6 +12,7 @@ using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Log4Net.Loggers;
+using Core.Events.Abstract;
 using Core.Events.Results;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
@@ -33,12 +35,11 @@ namespace Business.Concrete
     {
         public List<List<FieldHourlyArchiveParameter>> _fieldHourlyArchiveParameters;
         IHourlyArchiveParameterDal _hourlyArchiveParameterDal;
-
+       
         public HourlyArchiveParameterManager(IHourlyArchiveParameterDal hourlyArchiveParameterDal)
         {
             _hourlyArchiveParameterDal = hourlyArchiveParameterDal;
             _fieldHourlyArchiveParameters = new List<List<FieldHourlyArchiveParameter>>();
-            
         }
 
         public IDataResult<List<HourlyArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(int deviceID,DateTime beginDate, DateTime endDate)
@@ -46,29 +47,32 @@ namespace Business.Concrete
             return new SuccessDataResult<List<HourlyArchiveParameter>>(_hourlyArchiveParameterDal.GetAll(hp => hp.HistoryDateTime >= beginDate && hp.HistoryDateTime <= endDate && hp.DeviceId==deviceID));
         }
 
-
-        [ValidationAspect(typeof(DataTransmissionParametersHolderListValidator), Priority = 1)]
-        [LogAspect(typeof(FileLogger), Priority = 2)]
+        [WinFormSecuredOperation("100",Priority =1)]
+        [ValidationAspect(typeof(DataTransmissionParametersHolderListValidator), Priority = 2)]
+        [LogAspect(typeof(FileLogger), Priority = 3)]
         public async Task GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters)
         {
             InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Clear();
             _fieldHourlyArchiveParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
-            foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
+            await Task.Run( async() =>
             {
-                //throw new Exception("Nurlan");
-                deviceParameter.SemaphoreSlimT = semaphoreSlim;
-                await deviceParameter.SemaphoreSlimT.WaitAsync();
-                var fieldHourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldHourlyArchiveParameterService>();
-                var result = fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(deviceParameter);
-                fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += FieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
-
-                if (result == null)
+                foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
                 {
-                    ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
-                     MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
+                    //throw new Exception("Nurlan");
+                    deviceParameter.SemaphoreSlimT = semaphoreSlim;
+                    await deviceParameter.SemaphoreSlimT.WaitAsync();
+                    var fieldHourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldHourlyArchiveParameterService>();
+                    var result = fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(deviceParameter);
+                    fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += FieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
+
+                    if (result == null)
+                    {
+                        ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
+                         MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
+                    }
                 }
-            }
+            });
         }
 
         private void FieldHourArchiveParameterService_OnFieldDataIsReadyEvent(object sender, FieldEventResult<FieldHourlyArchiveParameter, IProgress<ProgressStatus>> e)

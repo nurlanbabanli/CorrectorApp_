@@ -16,7 +16,6 @@ namespace Core.Utilities.Interceptors
         protected virtual void OnException(IInvocation invocation, Exception exception) { }
         protected virtual void OnSuccess(IInvocation invocation) { }
 
-
         public override void Intercept(IInvocation invocation)
         {
             try
@@ -51,7 +50,7 @@ namespace Core.Utilities.Interceptors
             catch (Exception ex)
             {
                 LogException(invocation, ex);
-                InMemoryPeriodicLogger.Log(invocation,ex);
+                //InMemoryPeriodicLogger.Log(invocation,ex);
                 CallSemaphoreSlimRelase(invocation);
             }
         }

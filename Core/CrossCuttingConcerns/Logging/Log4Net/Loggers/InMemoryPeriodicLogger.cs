@@ -13,15 +13,16 @@ namespace Core.CrossCuttingConcerns.Logging.Log4Net.Loggers
     {
         public static void Log(IInvocation invocation, System.Exception exception)
         {
-            foreach (var argument in invocation.Arguments)
-            {
-                if (argument.GetType()==typeof(DataTransmissionParameterHolder))
-                {
-                    DataTransmissionParameterHolder dataTransmissionParameterHolder = (DataTransmissionParameterHolder)argument;
-                    InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Add(new InMemoryLoggerParameter { DeviceId = dataTransmissionParameterHolder.DeviceParametersHolder.Id, Messages = exception.Message });    
-                    break;
-                }
-            }
+            //foreach (var argument in invocation.Arguments)
+            //{
+            //    if (argument.GetType()==typeof(DataTransmissionParameterHolder))
+            //    {
+            //        DataTransmissionParameterHolder dataTransmissionParameterHolder = (DataTransmissionParameterHolder)argument;
+            //        InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Add(new InMemoryLoggerParameter { DeviceId = dataTransmissionParameterHolder.DeviceParametersHolder.Id, Messages = exception.Message });    
+            //        break;
+            //    }
+            //}
+
         }
     }
 }

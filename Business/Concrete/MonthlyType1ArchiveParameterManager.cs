@@ -51,20 +51,24 @@ namespace Business.Concrete
             InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Clear();
             _fieldMonthlyType1ArchiveParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
-            foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
-            {
-                deviceParameter.SemaphoreSlimT = semaphoreSlim;
-                await deviceParameter.SemaphoreSlimT.WaitAsync();
-                var fieldMonthlyType1ArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldMonthlyType1ArchiveParameterService>();
-                var result = fieldMonthlyType1ArchiveParameterService.GetMonthlyType1ArchiveFromDeviceAsync(deviceParameter);
-                fieldMonthlyType1ArchiveParameterService.OnFieldDataIsReadyEvent += FieldMonthlyType1ArchiveParameterService_OnFieldDataIsReadyEvent;
 
-                if (result == null)
+            await Task.Run(async() =>
+            {
+                foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
                 {
-                    ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
-                     MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
+                    deviceParameter.SemaphoreSlimT = semaphoreSlim;
+                    await deviceParameter.SemaphoreSlimT.WaitAsync();
+                    var fieldMonthlyType1ArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldMonthlyType1ArchiveParameterService>();
+                    var result = fieldMonthlyType1ArchiveParameterService.GetMonthlyType1ArchiveFromDeviceAsync(deviceParameter);
+                    fieldMonthlyType1ArchiveParameterService.OnFieldDataIsReadyEvent += FieldMonthlyType1ArchiveParameterService_OnFieldDataIsReadyEvent;
+
+                    if (result == null)
+                    {
+                        ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
+                         MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
+                    }
                 }
-            }
+            });
         }
 
         private void FieldMonthlyType1ArchiveParameterService_OnFieldDataIsReadyEvent(object sender, FieldEventResult<FieldMonthlyType1ArchiveParameter, IProgress<ProgressStatus>> e)
