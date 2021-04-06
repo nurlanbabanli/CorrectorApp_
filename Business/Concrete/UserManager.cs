@@ -2,6 +2,8 @@
 using Business.BusinessMessages;
 using Business.Helper.RuleChecker;
 using Business.Utilities;
+using Core.ActionReports;
+using Core.Aspects.Autofac.Transaction;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
 using DataAccess.Abstract;
@@ -17,13 +19,15 @@ namespace Business.Concrete
     public class UserManager : IUserService
     {
         IUserDal _userDal;
+        IUserAccessDal _userAccessDal;
 
-        public UserManager(IUserDal userDal)
+        public UserManager(IUserDal userDal,IUserAccessDal userAccessDal)
         {
             _userDal = userDal;
+            _userAccessDal = userAccessDal;
         }
 
-        public IResult Add(User user)
+        public IResult Add(User user, IProgress<ProgressStatus> progress)
         {
             IResult result = BusinessRules.Run(UserRules.CheckIfUserIdExist(_userDal, user.UserId));
             if (result!=null)
@@ -31,6 +35,25 @@ namespace Business.Concrete
                 return result;
             }
             _userDal.Add(user);
+            return new SuccessResult();
+        }
+        [TransactionScopeAspect(Priority =1)]
+        public IResult AddWithAccess(User user, List<UserAccess> userAccess, IProgress<ProgressStatus> progress)
+        {
+            IResult result = BusinessRules.Run(UserRules.CheckIfUserIdExist(_userDal, user.UserId));
+            if (result!=null)
+            {
+                return result;
+            }
+            _userDal.Add(user);
+            foreach (var access in userAccess)
+            {
+                IResult accesssResult = BusinessRules.Run(UserAccessRules.CheckIfUserAccessExist(_userAccessDal, access.UserId, access.AccessCode));
+                if (accesssResult == null)
+                {
+                    _userAccessDal.Add(access);
+                }              
+            }
             return new SuccessResult();
         }
 
@@ -44,7 +67,7 @@ namespace Business.Concrete
             return new SuccessDataResult<User>(_userDal.Get(us => us.UserId == userId));
         }
 
-        public IResult Update(User user)
+        public IResult Update(User user, IProgress<ProgressStatus> progress)
         {
             _userDal.Update(user);
             return new SuccessResult(Messages.UserUpdated);

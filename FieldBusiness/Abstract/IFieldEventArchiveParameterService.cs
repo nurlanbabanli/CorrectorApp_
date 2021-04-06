@@ -12,6 +12,6 @@ namespace FieldBusiness.Abstract
 {
     public interface IFieldEventArchiveParameterService : IResultEvent<FieldEventArchiveParameter, IProgress<ProgressStatus>>
     {
-        Task GetEventArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter);
+        Task GetArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter);
     }
 }

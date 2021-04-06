@@ -29,7 +29,7 @@ namespace FieldBusiness.Concrete
         }
       
         [ValidationAspect(typeof(ArchiveDataTransmissionParameterHolderValidator),Priority =1)]
-        public async Task GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter)
+        public async Task GetArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter, IProgress<ProgressStatus> progress)
         {
             //throw new Exception("NNN");
             List<FieldHourlyArchiveParameter> result = await _fieldHourlyArchiveParameterDal.GetFieldArchiveParametersAsync(deviceParameter);

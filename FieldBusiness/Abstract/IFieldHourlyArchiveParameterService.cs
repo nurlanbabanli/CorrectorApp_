@@ -14,6 +14,6 @@ namespace FieldBusiness.Abstract
 {
     public interface IFieldHourlyArchiveParameterService : IResultEvent<FieldHourlyArchiveParameter,IProgress<ProgressStatus>>
     {
-        Task GetHourArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter);
+        Task GetArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter, IProgress<ProgressStatus> progress);
     }
 }

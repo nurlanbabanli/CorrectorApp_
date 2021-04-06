@@ -2,7 +2,6 @@
 using Business.Abstract;
 using Business.BusinessMessages;
 using Business.DependencyResolvers.Autofac;
-using Business.Helper.Logging;
 using Business.Helper.ParameterConverters;
 using Business.Utilities;
 using Business.ValidationRules.FluentValidation;
@@ -15,7 +14,6 @@ using Core.Events.Results;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
 using Core.Utilities.FieldDeviceIdentifier;
-using Core.Utilities.InMemoryLoggerParameters;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using FieldBusiness.Abstract;
@@ -48,7 +46,6 @@ namespace Business.Concrete
         [LogAspect(typeof(FileLogger), Priority = 2)]
         public async Task GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters)
         {
-            InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Clear();
             _fieldMonthlyType1ArchiveParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
 
@@ -59,14 +56,8 @@ namespace Business.Concrete
                     deviceParameter.SemaphoreSlimT = semaphoreSlim;
                     await deviceParameter.SemaphoreSlimT.WaitAsync();
                     var fieldMonthlyType1ArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldMonthlyType1ArchiveParameterService>();
-                    var result = fieldMonthlyType1ArchiveParameterService.GetMonthlyType1ArchiveFromDeviceAsync(deviceParameter);
+                    var result = fieldMonthlyType1ArchiveParameterService.GetArchiveFromDeviceAsync(deviceParameter);
                     fieldMonthlyType1ArchiveParameterService.OnFieldDataIsReadyEvent += FieldMonthlyType1ArchiveParameterService_OnFieldDataIsReadyEvent;
-
-                    if (result == null)
-                    {
-                        ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
-                         MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
-                    }
                 }
             });
         }

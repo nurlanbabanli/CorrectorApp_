@@ -34,5 +34,7 @@ namespace Business.BusinessMessages
         public static string PassworIsNull { get { return "Şifrə boş olmamalıdır."; } }
         public static string AuthorizationDenied { get { return "Bu əməliyyat üçün icazəniz yoxdur."; } }
         public static string ActiveUserNotFound { get { return "Hazırda sistemdə aktiv istifadəçi mövcud deyil."; } }
+        public static string UserRegistrationFaild { get { return "İstifadəçini əlavə etmək mümkün olmadı."; } }
+        public static string UserAccessRegistrationFaild { get { return "İstifadəçini icazələrini əlavə etmək mümkün olmadı."; } }
     }
 }

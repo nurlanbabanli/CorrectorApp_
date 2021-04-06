@@ -3,7 +3,6 @@ using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.BusinessMessages;
 using Business.DependencyResolvers.Autofac;
-using Business.Helper.Logging;
 using Business.Helper.ParameterConverters;
 using Business.Utilities;
 using Business.ValidationRules.FluentValidation;
@@ -17,7 +16,6 @@ using Core.Events.Results;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
 using Core.Utilities.FieldDeviceIdentifier;
-using Core.Utilities.InMemoryLoggerParameters;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using FieldBusiness.Abstract;
@@ -50,12 +48,12 @@ namespace Business.Concrete
         [WinFormSecuredOperation("100",Priority =1)]
         [ValidationAspect(typeof(DataTransmissionParametersHolderListValidator), Priority = 2)]
         [LogAspect(typeof(FileLogger), Priority = 3)]
-        public async Task GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters)
+        public async Task<IResult> GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters, IProgress<ProgressStatus> progress)
         {
-            InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Clear();
             _fieldHourlyArchiveParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
-            await Task.Run( async() =>
+            
+           return await Task<IResult>.Run( async() =>
             {
                 foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
                 {
@@ -63,15 +61,10 @@ namespace Business.Concrete
                     deviceParameter.SemaphoreSlimT = semaphoreSlim;
                     await deviceParameter.SemaphoreSlimT.WaitAsync();
                     var fieldHourArchiveParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldHourlyArchiveParameterService>();
-                    var result = fieldHourArchiveParameterService.GetHourArchiveFromDeviceAsync(deviceParameter);
+                    var result = fieldHourArchiveParameterService.GetArchiveFromDeviceAsync(deviceParameter, deviceParameter.UserInterfaceParametersHolder.ProgressReport);
                     fieldHourArchiveParameterService.OnFieldDataIsReadyEvent += FieldHourArchiveParameterService_OnFieldDataIsReadyEvent;
-
-                    if (result == null)
-                    {
-                        ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
-                         MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
-                    }
                 }
+                return new SuccessResult();
             });
         }
 
@@ -82,7 +75,7 @@ namespace Business.Concrete
             using (var scope = AutofacBusinessContainerBuilder.AutofacBusinessContainer.BeginLifetimeScope())
             {
                 var hourlyArchiveParameterManager = scope.Resolve<IHourlyArchiveParameterService>();
-                var result = hourlyArchiveParameterManager.AddArchiveParameterTransactionOperation(e.DataList);
+                var result = hourlyArchiveParameterManager.AddArchiveParameterTransactionOperation(e.DataList, e.Progress);
 
                 if (result == null)
                 {
@@ -93,7 +86,7 @@ namespace Business.Concrete
       
         [TransactionScopeAspect(Priority = 1)]
         [LogAspect(typeof(FileLogger), Priority = 2)]
-        public IResult AddArchiveParameterTransactionOperation(List<FieldHourlyArchiveParameter> fieldhourlyArchiveParameters)
+        public IResult AddArchiveParameterTransactionOperation(List<FieldHourlyArchiveParameter> fieldhourlyArchiveParameters, IProgress<ProgressStatus> progress )
         {
             using (var scope = AutofacBusinessContainerBuilder.AutofacBusinessContainer.BeginLifetimeScope())
             {

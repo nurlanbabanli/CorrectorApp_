@@ -35,7 +35,7 @@ namespace WinFormsAppTest
             if (progress.StatusId==MessageStatus.Error)
             {
                 this.BackColor = Color.Red;
-                lblId.Text = progress.Message;
+                label1.Text = progress.Message;
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using DataAccess.Abstract;
 using Entities.Concrete;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace DataAccess.Concrete.Database.Mssql.EntityFramework
             using (var context = new MssqlCorrectorContext())
             {
                 var addedEntity = context.Entry(userAccess);
-                //addedEntity.State = EntityState.Added;
+                addedEntity.State = EntityState.Added;
                 context.SaveChanges();
             }
         }
@@ -26,7 +27,7 @@ namespace DataAccess.Concrete.Database.Mssql.EntityFramework
             using (var context = new MssqlCorrectorContext())
             {
                 var addedEntity = context.Remove(userAccess);
-                //addedEntity.State = EntityState.Added;
+                addedEntity.State = EntityState.Added;
                 context.SaveChanges();
             }
         }
@@ -54,7 +55,7 @@ namespace DataAccess.Concrete.Database.Mssql.EntityFramework
             using (var context = new MssqlCorrectorContext())
             {
                 var updatedEntity = context.Entry(userAccess);
-                //updatedEntity.State = EntityState.Modified;
+                updatedEntity.State = EntityState.Modified;
                 context.SaveChanges();
             }
         }

@@ -24,7 +24,7 @@ namespace FieldBusiness.Concrete
             _fieldMonthlyType2ArchiveParameterDal = fieldMonthlyType2ArchiveParameterDal;
         }
         [ValidationAspect(typeof(ArchiveDataTransmissionParameterHolderValidator), Priority = 1)]
-        public async Task GetMonthlyType2ArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter)
+        public async Task GetArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter)
         {
             List<FieldMonthlyType2ArchiveParameter> result = await _fieldMonthlyType2ArchiveParameterDal.GetFieldArchiveParametersAsync(deviceParameter);
             var fieldEventResult = new FieldEventResult<FieldMonthlyType2ArchiveParameter, IProgress<ProgressStatus>>()

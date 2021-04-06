@@ -59,7 +59,11 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<CorrectorMasterManager>().As<ICorrectorMasterService>().InstancePerDependency();
             builder.RegisterType<MssqlEfCorrectorMasterDal>().As<ICorrectorMasterDal>().InstancePerDependency();
 
-
+            builder.RegisterType<WinFormAuthManager>().As<IWinFormAuthService>().InstancePerDependency();
+            builder.RegisterType<UserManager>().As<IUserService>().InstancePerDependency();
+            builder.RegisterType<MssqlEfUserDal>().As<IUserDal>().InstancePerDependency();
+            builder.RegisterType<UserAccessManager>().As<IUserAccessService>().InstancePerDependency();
+            builder.RegisterType<MssqlEfUserAccessDal>().As<IUserAccessDal>().InstancePerDependency();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 

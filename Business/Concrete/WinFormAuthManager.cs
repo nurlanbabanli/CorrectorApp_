@@ -2,6 +2,7 @@
 using Business.BusinessMessages;
 using Business.Utilities.Security;
 using Business.ValidationRules.FluentValidation;
+using Core.ActionReports;
 using Core.Aspects.Autofac.Logging;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
@@ -25,33 +26,32 @@ namespace Business.Concrete
         IUserService _userService;
         IUserAccessService _userAccessService;
 
-        public WinFormAuthManager(IUserService userService,IUserAccessService userAccessService)
+        public WinFormAuthManager(IUserService userService, IUserAccessService userAccessService)
         {
             _userService = userService;
             _userAccessService = userAccessService;
         }
 
         [LogAspect(typeof(FileLogger), Priority = 2)]
-        public IResult Login(UserForLoginDto userForLoginDto)
+        public IDataResult<User> Login(UserForLoginDto userForLoginDto, IProgress<ProgressStatus> progress)
         {
             var userToCheck = _userService.GetById(userForLoginDto.UserId).Data;
-            if (userToCheck==null)
+            if (userToCheck == null)
             {
-                return new ErrorResult(Messages.UserNotFound);
+                return new ErrorDataResult<User>(null,Messages.UserNotFound);
             }
             var passwordHolder = new PasswordHolder { PasswordHash = userToCheck.PasswordHash, PasswordSalt = userToCheck.PasswordSalt };
-            if (!HashingHelper.VerifyPasswordHash(userForLoginDto.Password,passwordHolder))
+            if (!HashingHelper.VerifyPasswordHash(userForLoginDto.Password, passwordHolder))
             {
-                return new ErrorResult(Messages.PasswordError);
+                return new ErrorDataResult<User>(null,Messages.PasswordError);
             }
 
             GetCurentUserAccess(userToCheck);
             return new SuccessDataResult<User>(userToCheck, Messages.SuccessfullLogin);
         }
 
-        [ValidationAspect(typeof(UserForRegisterDtoValidator),Priority =1)]
-        [TransactionScopeAspect(Priority =2)]
-        public IDataResult<User> Register(UserForRegisterDto userForRegisterDto,List<UserAccess> userAccess=null)
+        [ValidationAspect(typeof(UserForRegisterDtoValidator), Priority = 1)]
+        public IDataResult<User> RegisterUserWithAccess(UserForRegisterDto userForRegisterDto, IProgress<ProgressStatus> progress, List<UserAccess> userAccess)
         {
             var passwordHolder = HashingHelper.CreatePasswordHash(userForRegisterDto.Password);
             var user = new User
@@ -68,14 +68,49 @@ namespace Business.Concrete
                 HostIp = userForRegisterDto.HostIp,
                 Position = userForRegisterDto.Position
             };
-            _userService.Add(user);
-            if (userAccess!=null)
+
+            IResult result = _userService.AddWithAccess(user, userAccess, progress);
+            if (result == null)
             {
-                foreach (var access in userAccess)
-                {
-                    _userAccessService.Add(access);
-                }
+                return new ErrorDataResult<User>(user, Messages.UserRegistrationFaild);
             }
+            else if (!result.IsSuccess)
+            {
+                return new ErrorDataResult<User>(user, result.Message);
+            }
+
+            return new SuccessDataResult<User>(user, Messages.UserRegistered);
+        }
+
+        [ValidationAspect(typeof(UserForRegisterDtoValidator), Priority = 1)]
+        public IDataResult<User> RegisterUser(UserForRegisterDto userForRegisterDto, IProgress<ProgressStatus> progress)
+        {
+            var passwordHolder = HashingHelper.CreatePasswordHash(userForRegisterDto.Password);
+            var user = new User
+            {
+                UserId = userForRegisterDto.UserId,
+                PasswordHash = passwordHolder.PasswordHash,
+                PasswordSalt = passwordHolder.PasswordSalt,
+                FirstName = userForRegisterDto.FirstName,
+                LastName = userForRegisterDto.LastName,
+                Email = userForRegisterDto.Email,
+                IsAdmin = userForRegisterDto.IsAdmin,
+                Status = userForRegisterDto.Status,
+                DepartmentName = userForRegisterDto.DepartmentName,
+                HostIp = userForRegisterDto.HostIp,
+                Position = userForRegisterDto.Position
+            };
+
+            IResult result = _userService.Add(user, progress);
+            if (result==null)
+            {
+                return new ErrorDataResult<User>(user, Messages.UserRegistrationFaild);
+            }
+            else if(!result.IsSuccess)
+            {
+                return new ErrorDataResult<User>(user, result.Message);
+            }
+
             return new SuccessDataResult<User>(user, Messages.UserRegistered);
         }
 

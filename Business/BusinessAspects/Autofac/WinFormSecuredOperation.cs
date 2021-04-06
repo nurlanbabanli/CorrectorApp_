@@ -1,4 +1,5 @@
 ﻿using Business.BusinessMessages;
+using Business.Events;
 using Business.Utilities.Security;
 using Castle.DynamicProxy;
 using Core.Events.Abstract;
@@ -13,7 +14,6 @@ namespace Business.BusinessAspects.Autofac
 {
     public class WinFormSecuredOperation:MethodInterception
     {
-        public event EventHandler<string> OnSecuredOperationTransactionException;
         string _methodAccessCode;
         public WinFormSecuredOperation(string accessCode)
         {
@@ -31,10 +31,8 @@ namespace Business.BusinessAspects.Autofac
                         return;
                     }
                 }
-                OnSecuredOperationTransactionException.Invoke(this, Messages.AuthorizationDenied + "/" + ActiveUser.activeUser.UserId);
                 throw new Exception(Messages.AuthorizationDenied + "/" + ActiveUser.activeUser.UserId);
             }
-            OnSecuredOperationTransactionException.Invoke(this, Messages.ActiveUserNotFound);
             throw new Exception(Messages.ActiveUserNotFound);
         }
     }

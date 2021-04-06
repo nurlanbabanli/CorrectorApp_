@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using Core.ActionReports;
 using Core.CrossCuttingConcerns.Logging.Log4Net;
 using Core.CrossCuttingConcerns.Logging.Log4Net.Loggers;
 using Core.Utilities.FieldDeviceIdentifier;
@@ -35,7 +36,7 @@ namespace Core.Utilities.Interceptors
                 {
                     isSuccess = false;
                     OnException(invocation, e);
-                    InMemoryPeriodicLogger.Log(invocation, e);
+                    ReturnMethodExceptions(invocation, e);
                     throw;
                 }
                 finally
@@ -50,7 +51,7 @@ namespace Core.Utilities.Interceptors
             catch (Exception ex)
             {
                 LogException(invocation, ex);
-                //InMemoryPeriodicLogger.Log(invocation,ex);
+                ReturnMethodExceptions(invocation, ex);
                 CallSemaphoreSlimRelase(invocation);
             }
         }
@@ -72,6 +73,27 @@ namespace Core.Utilities.Interceptors
         {
             CommonExceptionLogger commonExceptionLogger = new CommonExceptionLogger(typeof(ExceptionFileLogger));
             commonExceptionLogger.Log(invocation, exception);
+        }
+
+        private static void ReturnMethodExceptions(IInvocation invocation, Exception exception)
+        {
+            if (invocation.Arguments.Length>=2)
+            {
+                IProgress<ProgressStatus> argument = null;
+                foreach (var arg in invocation.Arguments)
+                {
+                    if (arg.GetType()==typeof(Progress<ProgressStatus>))
+                    {
+                        argument = (IProgress<ProgressStatus>)arg;
+                        break;
+                    }
+                }               
+                if (argument!=null && argument.GetType() == typeof(Progress<ProgressStatus>))
+                {
+                    IProgress<ProgressStatus> progress = (IProgress<ProgressStatus>)argument;
+                    progress.Report(new ProgressStatus { StatusId = MessageStatus.Error, Message = exception.Message });
+                } 
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ namespace FieldBusiness.Concrete
         }
 
         [ValidationAspect(typeof(ArchiveDataTransmissionParameterHolderValidator), Priority = 1)]
-        public async Task GetEventArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter)
+        public async Task GetArchiveFromDeviceAsync(DataTransmissionParameterHolder deviceParameter)
         {
             List<FieldEventArchiveParameter> result =await _fieldEventArchiveParameterDal.GetFieldArchiveParametersAsync(deviceParameter);
             var fieldEventResult = new FieldEventResult<FieldEventArchiveParameter, IProgress<ProgressStatus>>()

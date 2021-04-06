@@ -17,7 +17,7 @@ namespace DataAccess.Concrete.Database.Mssql.EntityFramework
             using (var context = new MssqlCorrectorContext())
             {
                 var addedEntity = context.Entry(user);
-                //addedEntity.State = EntityState.Added;
+                addedEntity.State = EntityState.Added;
                 context.SaveChanges();
             }
         }
@@ -50,7 +50,7 @@ namespace DataAccess.Concrete.Database.Mssql.EntityFramework
             using (var context = new MssqlCorrectorContext())
             {
                 var updatedEntity = context.Entry(user);
-                //updatedEntity.State = EntityState.Modified;
+                updatedEntity.State = EntityState.Modified;
                 context.SaveChanges();
             }
         }

@@ -1,4 +1,5 @@
-﻿using Core.Results.Abstract;
+﻿using Core.ActionReports;
+using Core.Results.Abstract;
 using Entities.Concrete;
 using Entities.Dtos;
 using System;
@@ -11,7 +12,8 @@ namespace Business.Abstract
 {
     public interface IWinFormAuthService
     {
-        IResult Login(UserForLoginDto userForLoginDto);
-        IDataResult<User> Register(UserForRegisterDto userForRegisterDto, List<UserAccess> userAccess = null);
+        IDataResult<User> Login(UserForLoginDto userForLoginDto,IProgress<ProgressStatus> progress);
+        IDataResult<User> RegisterUserWithAccess(UserForRegisterDto userForRegisterDto, IProgress<ProgressStatus> progress, List<UserAccess> userAccess = null);
+        IDataResult<User> RegisterUser(UserForRegisterDto userForRegisterDto, IProgress<ProgressStatus> progress);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Core.ActionReports;
 using Core.Results.Abstract;
 using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
@@ -14,8 +15,8 @@ namespace Business.Abstract
 {
     public interface IHourlyArchiveParameterService
     {
-        Task GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters);
-        IResult AddArchiveParameterTransactionOperation(List<FieldHourlyArchiveParameter> hourlyArchiveParameters);
+        Task<IResult> GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters, IProgress<ProgressStatus> progress);
+        IResult AddArchiveParameterTransactionOperation(List<FieldHourlyArchiveParameter> hourlyArchiveParameters, IProgress<ProgressStatus> progress);
         IDataResult<List<HourlyArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(int deviceId,DateTime beginDate, DateTime endDate);
     }
 }

@@ -25,7 +25,6 @@ namespace Core.Aspects.Autofac.Transaction
                 catch (System.Exception ex)
                 {
                     transactionScope.Dispose();
-                    InMemoryPeriodicLogger.Log(invocation, ex);
                     throw;
                 }
             }

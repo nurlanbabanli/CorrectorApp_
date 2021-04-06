@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using Business.Abstract;
 using Business.DependencyResolvers.Autofac;
-using Business.Helper.Logging;
 using Business.Helper.ParameterConverters;
 using Business.Utilities;
 using Business.ValidationRules.FluentValidation;
@@ -13,7 +12,6 @@ using Core.Events.Results;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
 using Core.Utilities.FieldDeviceIdentifier;
-using Core.Utilities.InMemoryLoggerParameters;
 using FieldBusiness.Abstract;
 using FieldEntities.Concrete;
 using System;
@@ -34,7 +32,6 @@ namespace Business.Concrete
         [LogAspect(typeof(FileLogger), Priority = 2)]
         public async Task GetCurrentParameterFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters)
         {
-            InMemoryLoggedMessages.InMemoryMesssageLoggerParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
 
             await Task.Run(async () =>
@@ -46,12 +43,6 @@ namespace Business.Concrete
                     var fieldCurrentParameterService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IFieldCurrentParameterService>();
                     var result = fieldCurrentParameterService.GetCurrentParametFromDeviceAsync(deviceParameter);
                     fieldCurrentParameterService.OnFieldDataIsReadyEvent += FieldCurrentParameterService_OnFieldDataIsReadyEvent;
-
-                    if (result == null)
-                    {
-                        ErrorProgressReport(deviceParameter.UserInterfaceParametersHolder.ProgressReport,
-                         MessageFormatter.GetMessage(InMemoryLoggedMessages.InMemoryMesssageLoggerParameters, deviceParameter.DeviceParametersHolder.Id));
-                    }
                 }
             });
 

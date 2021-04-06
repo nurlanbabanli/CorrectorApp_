@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Business.Helper.RuleChecker;
 using Business.Utilities;
+using Core.ActionReports;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
 using DataAccess.Abstract;
@@ -22,7 +23,7 @@ namespace Business.Concrete
             _userAccessDal = userAccessDal;
         }
 
-        public IResult Add(UserAccess userAccess)
+        public IResult Add(UserAccess userAccess, IProgress<ProgressStatus> progress)
         {
             IResult result = BusinessRules.Run(UserAccessRules.CheckIfUserAccessExist(_userAccessDal, userAccess.UserId, userAccess.AccessCode));
             if (result!=null)
@@ -38,7 +39,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<UserAccess>>(_userAccessDal.GetAll(usa=>usa.UserId==userId));
         }
 
-        public IResult Delete(UserAccess userAccess)
+        public IResult Delete(UserAccess userAccess, IProgress<ProgressStatus> progress)
         {
             IResult result = BusinessRules.Run(UserAccessRules.CheckIfUserAccessExist(_userAccessDal, userAccess.UserId, userAccess.AccessCode));
             if (result!=null)
