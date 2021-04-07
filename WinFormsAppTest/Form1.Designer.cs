@@ -38,6 +38,7 @@ namespace WinFormsAppTest
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.button6 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // archiveHandlerHolder
@@ -132,12 +133,23 @@ namespace WinFormsAppTest
             this.label2.TabIndex = 8;
             this.label2.Text = "Main Exceptioon:";
             // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(362, 12);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(103, 36);
+            this.button6.TabIndex = 9;
+            this.button6.Text = "Logout";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonShadow;
             this.ClientSize = new System.Drawing.Size(1074, 550);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
@@ -166,6 +178,7 @@ namespace WinFormsAppTest
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button button6;
     }
 }
 

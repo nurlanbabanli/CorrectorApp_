@@ -25,11 +25,13 @@ namespace Business.Concrete
     {
         IUserService _userService;
         IUserAccessService _userAccessService;
+        IUserLogService _userLogService;
 
-        public WinFormAuthManager(IUserService userService, IUserAccessService userAccessService)
+        public WinFormAuthManager(IUserService userService, IUserAccessService userAccessService,IUserLogService userLogService)
         {
             _userService = userService;
             _userAccessService = userAccessService;
+            _userLogService = userLogService;
         }
 
         [LogAspect(typeof(FileLogger), Priority = 2)]
@@ -47,7 +49,17 @@ namespace Business.Concrete
             }
 
             GetCurentUserAccess(userToCheck);
+            UserLoginLog(userToCheck,progress);
             return new SuccessDataResult<User>(userToCheck, Messages.SuccessfullLogin);
+        }
+
+        public IResult Logout(IProgress<ProgressStatus> progress)
+        {
+            UserLogoutLog(progress);
+            ActiveUser.activeUser = null;
+            ActiveUser.userAccess = null;
+            ActiveUser.UserLoginDate = null;
+            return new SuccessResult();
         }
 
         [ValidationAspect(typeof(UserForRegisterDtoValidator), Priority = 1)]
@@ -117,8 +129,30 @@ namespace Business.Concrete
         private void GetCurentUserAccess(User user)
         {
             ActiveUser.activeUser = user;
+            ActiveUser.UserLoginDate = DateTime.Now;
             ActiveUser.userAccess = _userAccessService.GetByUserId(user.UserId).Data;
         }
 
+        private void UserLoginLog(User user, IProgress<ProgressStatus> progress)
+        {           
+            var userLog = new UserLog
+            {
+                UserId = user.UserId,
+                HostName = System.Net.Dns.GetHostName(),
+                UserName = Environment.UserName,
+                LoginDate = ActiveUser.UserLoginDate,
+            };
+            _userLogService.Add(userLog, progress);          
+        }
+
+        private void UserLogoutLog(IProgress<ProgressStatus> progress)
+        {
+            if (ActiveUser.activeUser!=null)
+            {
+                var userLog = _userLogService.Get(ActiveUser.activeUser.UserId, ActiveUser.UserLoginDate).Data;
+
+               //IResult result= _userLogService.Update(userLog, progress);
+            }
+        }
     }
 }

@@ -64,10 +64,12 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<MssqlEfUserDal>().As<IUserDal>().InstancePerDependency();
             builder.RegisterType<UserAccessManager>().As<IUserAccessService>().InstancePerDependency();
             builder.RegisterType<MssqlEfUserAccessDal>().As<IUserAccessDal>().InstancePerDependency();
+            builder.RegisterType<UserLogManager>().As<IUserLogService>().InstancePerDependency();
+            builder.RegisterType<MssqlEfUserLogDal>().As<IUserLogDal>().InstancePerDependency();
+
+
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-
-
             builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces().EnableInterfaceInterceptors(new ProxyGenerationOptions()
             {
                 Selector = new AspectInterceptorSelector()

@@ -174,5 +174,26 @@ namespace WinFormsAppTest
                 label2.Text = result.Data.UserId + " loged";
             }
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            Progress = new Progress<ProgressStatus>(Action);
+            IWinFormAuthService winFormAuthService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IWinFormAuthService>();
+
+            IResult result = winFormAuthService.Logout(Progress);
+            if (result == null)
+            {
+                MessageBox.Show("Logotn Error");
+            }
+            else if (!result.IsSuccess)
+            {
+                MessageBox.Show(result.Message);
+            }
+            else
+            {
+                MessageBox.Show(result.Message);
+                label2.Text ="User logedout";
+            }
+        }
     }
 }

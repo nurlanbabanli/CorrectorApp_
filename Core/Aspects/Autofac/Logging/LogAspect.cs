@@ -1,6 +1,7 @@
 ﻿using Castle.DynamicProxy;
 using Core.CrossCuttingConcerns.Logging;
 using Core.CrossCuttingConcerns.Logging.Log4Net;
+using Core.Tools;
 using Core.Utilities.Interceptors;
 using System;
 using System.Collections.Generic;
@@ -10,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace Core.Aspects.Autofac.Logging
 {
-    public class LogAspect:MethodInterception
+    public class LogAspect : MethodInterception
     {
         private LoggerServiceBase _loggerServiceBase;
         public LogAspect(Type loggerService)
         {
-            if (loggerService.BaseType!=typeof(LoggerServiceBase))
+            if (loggerService.BaseType != typeof(LoggerServiceBase))
             {
                 throw new System.Exception("Wrong logger type N");
             }
@@ -45,6 +46,7 @@ namespace Core.Aspects.Autofac.Logging
             {
                 MethodName = invocation.Method.Name,
                 ClassName = invocation.TargetType.Name,
+                DateTime = FormatDateTime.FormatDateTimeValue(DateTime.Now),
                 LogParameters = logParameters
             };
 

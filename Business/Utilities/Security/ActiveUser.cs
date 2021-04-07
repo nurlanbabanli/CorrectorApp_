@@ -10,6 +10,7 @@ namespace Business.Utilities.Security
     public class ActiveUser
     {
         public static User activeUser;
+        public static DateTime? UserLoginDate;
         public static List<UserAccess> userAccess;
     }
 }

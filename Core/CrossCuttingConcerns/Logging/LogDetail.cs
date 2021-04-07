@@ -10,6 +10,7 @@ namespace Core.CrossCuttingConcerns.Logging
     {
         public string MethodName { get; set; }
         public string ClassName { get; set; }
+        public string DateTime { get; set; }
         public List<LogParameter> LogParameters { get; set; }
 
     }

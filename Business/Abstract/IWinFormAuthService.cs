@@ -13,6 +13,7 @@ namespace Business.Abstract
     public interface IWinFormAuthService
     {
         IDataResult<User> Login(UserForLoginDto userForLoginDto,IProgress<ProgressStatus> progress);
+        IResult Logout(IProgress<ProgressStatus> progress);
         IDataResult<User> RegisterUserWithAccess(UserForRegisterDto userForRegisterDto, IProgress<ProgressStatus> progress, List<UserAccess> userAccess = null);
         IDataResult<User> RegisterUser(UserForRegisterDto userForRegisterDto, IProgress<ProgressStatus> progress);
     }
