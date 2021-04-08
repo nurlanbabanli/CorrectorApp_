@@ -71,7 +71,7 @@ namespace WinFormsAppTest
             {
                 Progress = new Progress<ProgressStatus>(Action);
                 _hourArchiveParameterService = hourArchiveParameterService;
-                IResult result = await _hourArchiveParameterService.GetArchivesFromDeviceAsync(DeviceParameters, Progress);
+                var result = await _hourArchiveParameterService.GetArchivesFromDeviceAsync(DeviceParameters, Progress);
                 if (result!=null && result.IsSuccess)
                 {
                     lblValidationException.Text = "Main Succced";
@@ -125,20 +125,20 @@ namespace WinFormsAppTest
             IWinFormAuthService winFormAuthService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IWinFormAuthService>();
             var userForRegisterDto = new UserForRegisterDto
             {
-                UserId = "Nurlan",
+                UserId = "Nurlan4",
                 Password = "123",
                 FirstName = "Nurlan",
             };
 
             var userAccess = new UserAccess
             {
-                UserId = "Nurlan2",
-                AccessCode = "100"
+                UserId = "Nurlan4",
+                AccessCode = "101"
             };
             List<UserAccess> Access = new List<UserAccess>();
             Access.Add(userAccess);
 
-            IResult result = winFormAuthService.RegisterUser(userForRegisterDto,Progress);
+            IResult result = winFormAuthService.RegisterUserWithAccess(userForRegisterDto,Progress,Access);
             if (result!=null)
             {
                 MessageBox.Show(result.Message);
@@ -156,7 +156,7 @@ namespace WinFormsAppTest
             IWinFormAuthService winFormAuthService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IWinFormAuthService>();
             var userLoginDto = new UserForLoginDto
             {
-                UserId = "Nurlan",
+                UserId = "Nurlan4",
                 Password = "123"
             };
            IDataResult<User> result= winFormAuthService.Login(userLoginDto, Progress);
@@ -191,9 +191,21 @@ namespace WinFormsAppTest
             }
             else
             {
-                MessageBox.Show(result.Message);
                 label2.Text ="User logedout";
             }
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Progress = new Progress<ProgressStatus>(Action);
+            IWinFormAuthService winFormAuthService = AutofacBusinessContainerBuilder.AutofacBusinessContainer.Resolve<IWinFormAuthService>();
+
+            IResult result = winFormAuthService.Logout(Progress);
         }
     }
 }

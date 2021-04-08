@@ -14,7 +14,7 @@ namespace Business.Abstract
     {
         IDataResult<User> Login(UserForLoginDto userForLoginDto,IProgress<ProgressStatus> progress);
         IResult Logout(IProgress<ProgressStatus> progress);
-        IDataResult<User> RegisterUserWithAccess(UserForRegisterDto userForRegisterDto, IProgress<ProgressStatus> progress, List<UserAccess> userAccess = null);
+        IDataResult<User> RegisterUserWithAccess(UserForRegisterDto userForRegisterDto, IProgress<ProgressStatus> progress, List<UserAccess> userAccess);
         IDataResult<User> RegisterUser(UserForRegisterDto userForRegisterDto, IProgress<ProgressStatus> progress);
     }
 }

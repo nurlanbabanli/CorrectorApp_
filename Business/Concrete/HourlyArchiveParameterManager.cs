@@ -5,6 +5,7 @@ using Business.BusinessMessages;
 using Business.DependencyResolvers.Autofac;
 using Business.Helper.ParameterConverters;
 using Business.Utilities;
+using Business.Utilities.Security;
 using Business.ValidationRules.FluentValidation;
 using Core.ActionReports;
 using Core.Aspects.Autofac.Logging;
@@ -22,6 +23,7 @@ using FieldBusiness.Abstract;
 using FieldEntities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -33,6 +35,8 @@ namespace Business.Concrete
     {
         public List<List<FieldHourlyArchiveParameter>> _fieldHourlyArchiveParameters;
         IHourlyArchiveParameterDal _hourlyArchiveParameterDal;
+
+
        
         public HourlyArchiveParameterManager(IHourlyArchiveParameterDal hourlyArchiveParameterDal)
         {
@@ -40,12 +44,19 @@ namespace Business.Concrete
             _fieldHourlyArchiveParameters = new List<List<FieldHourlyArchiveParameter>>();
         }
 
+
+
+
+        [WinFormSecuredOperation(MethodAccessCodes.BusinessHourlyArchiveManagerGetArchiveFromDatabase, Messages.HourlyArchiveManagerGetArchiveFromDatabase, Priority = 1)]
+        [LogAspect(typeof(FileLogger), Priority = 2)]
         public IDataResult<List<HourlyArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(int deviceID,DateTime beginDate, DateTime endDate)
         {
             return new SuccessDataResult<List<HourlyArchiveParameter>>(_hourlyArchiveParameterDal.GetAll(hp => hp.HistoryDateTime >= beginDate && hp.HistoryDateTime <= endDate && hp.DeviceId==deviceID));
         }
 
-        [WinFormSecuredOperation("100",Priority =1)]
+
+
+        [WinFormSecuredOperation(MethodAccessCodes.BusinessHourlyArchiveManagerGetArchiveFromDevice, Messages.HourlyArchiveManagerGetArchiveFromDevice, Priority =1)]
         [ValidationAspect(typeof(DataTransmissionParametersHolderListValidator), Priority = 2)]
         [LogAspect(typeof(FileLogger), Priority = 3)]
         public async Task<IResult> GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters, IProgress<ProgressStatus> progress)
@@ -53,7 +64,7 @@ namespace Business.Concrete
             _fieldHourlyArchiveParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
             
-           return await Task<IResult>.Run( async() =>
+            return await Task<IResult>.Run( async() =>
             {
                 foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
                 {
@@ -67,6 +78,9 @@ namespace Business.Concrete
                 return new SuccessResult();
             });
         }
+
+
+
 
         private void FieldHourArchiveParameterService_OnFieldDataIsReadyEvent(object sender, FieldEventResult<FieldHourlyArchiveParameter, IProgress<ProgressStatus>> e)
         {
@@ -83,6 +97,9 @@ namespace Business.Concrete
                 }
             }
         }
+
+
+
       
         [TransactionScopeAspect(Priority = 1)]
         [LogAspect(typeof(FileLogger), Priority = 2)]
@@ -104,6 +121,7 @@ namespace Business.Concrete
             }
             return new SuccessResult();
         }
+
 
 
 

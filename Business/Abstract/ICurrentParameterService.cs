@@ -1,5 +1,6 @@
 ﻿using Business.Events.Abstract;
 using Business.Utilities;
+using Core.ActionReports;
 using Core.Results.Abstract;
 using Core.Utilities.FieldDeviceIdentifier;
 using System;
@@ -12,7 +13,7 @@ namespace Business.Abstract
 {
     public interface ICurrentParameterService: ICurrentParameterResultEvent<IDataResult<List<CurrentParameterHolder>>>
     {
-        Task GetCurrentParameterFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters);
-        Task GetCurrentParameterFromMqttBroker(string MqttTopic);
+        Task<IResult> GetCurrentParameterFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters, IProgress<ProgressStatus> progress);
+        Task GetCurrentParameterFromMqttBroker(string MqttTopic, IProgress<ProgressStatus> progress);
     }
 }

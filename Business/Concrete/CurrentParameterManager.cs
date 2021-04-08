@@ -1,8 +1,11 @@
 ﻿using Autofac;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
+using Business.BusinessMessages;
 using Business.DependencyResolvers.Autofac;
 using Business.Helper.ParameterConverters;
 using Business.Utilities;
+using Business.Utilities.Security;
 using Business.ValidationRules.FluentValidation;
 using Core.ActionReports;
 using Core.Aspects.Autofac.Logging;
@@ -28,13 +31,23 @@ namespace Business.Concrete
 
         public event EventHandler<IDataResult<List<CurrentParameterHolder>>> OnCurrentDataIsReadyEvent;
 
-        [ValidationAspect(typeof(DataTransmissionParametersHolderListValidator), Priority = 1)]
-        [LogAspect(typeof(FileLogger), Priority = 2)]
-        public async Task GetCurrentParameterFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters)
+
+
+        public CurrentParameterManager()
+        {
+            _fieldCurrentParameters = new List<List<FieldCurrentParameter>>();
+        }
+
+
+
+        [WinFormSecuredOperation(MethodAccessCodes.BusinessCurrentParameterGetFromDevice, Messages.CurrentParameterGetFromDevice, Priority = 1)]
+        [ValidationAspect(typeof(DataTransmissionParametersHolderListValidator), Priority = 2)]
+        [LogAspect(typeof(FileLogger), Priority = 3)]
+        public async Task<IResult> GetCurrentParameterFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters, IProgress<ProgressStatus> progress)
         {
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
 
-            await Task.Run(async () =>
+            return await Task<IResult>.Run(async () =>
             {
                 foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
                 {
@@ -44,9 +57,11 @@ namespace Business.Concrete
                     var result = fieldCurrentParameterService.GetCurrentParametFromDeviceAsync(deviceParameter);
                     fieldCurrentParameterService.OnFieldDataIsReadyEvent += FieldCurrentParameterService_OnFieldDataIsReadyEvent;
                 }
+                return new SuccessResult();
             });
-
         }
+
+
 
         private void FieldCurrentParameterService_OnFieldDataIsReadyEvent(object sender, FieldEventResult<FieldCurrentParameter, IProgress<ProgressStatus>> e)
         {
@@ -54,7 +69,8 @@ namespace Business.Concrete
             OnCurrentDataIsReadyEvent.Invoke(this, new SuccessDataResult<List<CurrentParameterHolder>>(CurrentParameterConverters.ConvertToViewFormat(e.DataList)));
         }
 
-        public Task GetCurrentParameterFromMqttBroker(string MqttTopic)
+
+        public Task GetCurrentParameterFromMqttBroker(string MqttTopic, IProgress<ProgressStatus> progress)
         {
             throw new NotImplementedException();
         }

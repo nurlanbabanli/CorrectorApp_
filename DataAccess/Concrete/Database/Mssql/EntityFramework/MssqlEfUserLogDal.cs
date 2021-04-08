@@ -25,7 +25,7 @@ namespace DataAccess.Concrete.Database.Mssql.EntityFramework
         public UserLog Get(Expression<Func<UserLog, bool>> expression)
         {
             using (var context = new MssqlCorrectorContext())
-            {
+            {                
                 return context.Set<UserLog>().SingleOrDefault(expression);
             }
         }

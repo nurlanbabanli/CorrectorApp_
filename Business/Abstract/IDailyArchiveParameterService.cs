@@ -1,4 +1,5 @@
-﻿using Core.Results.Abstract;
+﻿using Core.ActionReports;
+using Core.Results.Abstract;
 using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using FieldEntities.Concrete;
@@ -12,8 +13,8 @@ namespace Business.Abstract
 {
     public interface IDailyArchiveParameterService
     {
-        Task GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters);
-        IResult AddArchiveParameterTransactionOperation(List<FieldDailyArchiveParameter> fieldDailyArchiveParameters);
+        Task<IResult> GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters, IProgress<ProgressStatus> progress);
+        IResult AddArchiveParameterTransactionOperation(List<FieldDailyArchiveParameter> fieldDailyArchiveParameters, IProgress<ProgressStatus> progress);
         IDataResult<List<DailyArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(int deviceId, DateTime beginDate, DateTime endDate);
     }
 }

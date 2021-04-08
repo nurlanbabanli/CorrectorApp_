@@ -28,7 +28,7 @@ namespace Core.Aspects.Autofac.Exception
         {
             LogDetailWithException logDetailWithException = GetLogDetail(invocation);
             logDetailWithException.ExceptionMessage = exception.Message;
-            logDetailWithException.MessageDateTime = FormatDateTime.FormatDateTimeValue(DateTime.Now);
+            logDetailWithException.MessageDateTime = FormatDateTime.FormatDateTimeAsString(DateTime.Now);
             _loggerServiceBase.Error(logDetailWithException);
         }
 

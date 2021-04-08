@@ -15,9 +15,11 @@ namespace Business.BusinessAspects.Autofac
     public class WinFormSecuredOperation:MethodInterception
     {
         string _methodAccessCode;
-        public WinFormSecuredOperation(string accessCode)
+        string _modulFunction;
+        public WinFormSecuredOperation(string accessCode, string moduleFunction)
         {
             _methodAccessCode = accessCode;
+            _modulFunction = moduleFunction;
         }
         protected override void OnBefore(IInvocation invocation)
         {
@@ -31,7 +33,7 @@ namespace Business.BusinessAspects.Autofac
                         return;
                     }
                 }
-                throw new Exception(Messages.AuthorizationDenied + "/" + ActiveUser.activeUser.UserId);
+                throw new Exception( ActiveUser.activeUser.UserId+" "+_modulFunction);
             }
             throw new Exception(Messages.ActiveUserNotFound);
         }

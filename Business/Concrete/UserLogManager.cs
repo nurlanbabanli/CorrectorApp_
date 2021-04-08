@@ -29,7 +29,7 @@ namespace Business.Concrete
 
         public IDataResult<UserLog> Get(string userId, DateTime? loginDate)
         {
-            return new SuccessDataResult<UserLog>(_userLogDal.Get(ul => ul.UserId == userId && ul.LoginDate == loginDate));
+            return new SuccessDataResult<UserLog>(_userLogDal.Get(ul => ul.UserId == userId && ul.LoginDate==loginDate));
         }
 
         public IResult Update(UserLog userLog, IProgress<ProgressStatus> progress)

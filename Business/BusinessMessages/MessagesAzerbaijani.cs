@@ -36,5 +36,19 @@ namespace Business.BusinessMessages
         public static string ActiveUserNotFound { get { return "Hazırda sistemdə aktiv istifadəçi mövcud deyil."; } }
         public static string UserRegistrationFaild { get { return "İstifadəçini əlavə etmək mümkün olmadı."; } }
         public static string UserAccessRegistrationFaild { get { return "İstifadəçini icazələrini əlavə etmək mümkün olmadı."; } }
+
+
+
+        public const string HourlyArchiveManagerGetArchiveFromDevice= "saatlıq arxiv məlumatlarını qurğudan oxumaq üçün icazəniz yoxdur.";
+        public const string HourlyArchiveManagerGetArchiveFromDatabase="saatlıq arxiv məlumatlarını arxivdən oxumaq üçün icazəniz yoxdur.";
+        public const string EventArchiveManagerGetArchiveFromDevice = "hadisələr arxivi məlumatlarını qurğudan oxumaq üçün icazəniz yoxdur.";
+        public const string EventArchiveManagerGetArchiveFromDatabase = "hadisələr arxivi məlumatlarını arxivdən oxumaq üçün icazəniz yoxdur.";
+        public const string DailyArchiveManagerGetArchiveFromDevice = "günlük arxiv məlumatlarını qurğudan oxumaq üçün icazəniz yoxdur.";
+        public const string DailyArchiveManagerGetArchiveFromDatabase = "günlük arxiv məlumatlarını arxivdən oxumaq üçün icazəniz yoxdur.";
+        public const string MonthlyType1ArchiveManagerGetArchiveFromDevice = "aylıq həcm arxiv məlumatlarını qurğudan oxumaq üçün icazəniz yoxdur.";
+        public const string MonthlyType1ArchiveManagerGetArchiveFromDatabase = "aylıq həcm arxiv məlumatlarını arxivdən oxumaq üçün icazəniz yoxdur.";
+        public const string MonthlyType2ArchiveManagerGetArchiveFromDevice = "aylıq sərf arxiv məlumatlarını qurğudan oxumaq üçün icazəniz yoxdur.";
+        public const string MonthlyType2ArchiveManagerGetArchiveFromDatabase = "aylıq sərf arxiv məlumatlarını arxivdən oxumaq üçün icazəniz yoxdur.";
+        public const string CurrentParameterGetFromDevice = "Cari parameterin qurğudan oxunması üçün icazəniz yoxdur";
     }
 }

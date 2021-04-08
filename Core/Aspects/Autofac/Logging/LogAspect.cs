@@ -46,7 +46,7 @@ namespace Core.Aspects.Autofac.Logging
             {
                 MethodName = invocation.Method.Name,
                 ClassName = invocation.TargetType.Name,
-                DateTime = FormatDateTime.FormatDateTimeValue(DateTime.Now),
+                DateTime = FormatDateTime.FormatDateTimeAsString(DateTime.Now),
                 LogParameters = logParameters
             };
 

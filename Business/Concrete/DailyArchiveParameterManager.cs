@@ -1,9 +1,11 @@
 ﻿using Autofac;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.BusinessMessages;
 using Business.DependencyResolvers.Autofac;
 using Business.Helper.ParameterConverters;
 using Business.Utilities;
+using Business.Utilities.Security;
 using Business.ValidationRules.FluentValidation;
 using Core.ActionReports;
 using Core.Aspects.Autofac.Logging;
@@ -30,24 +32,33 @@ namespace Business.Concrete
     {
         IDailyArchiveParameterDal _dailyArchiveParameterDal;
         public List<List<FieldDailyArchiveParameter>> _fieldDailyArchiveParameters;
+
+
         public DailyArchiveParameterManager(IDailyArchiveParameterDal dailyArchiveParameterDal)
         {
             _dailyArchiveParameterDal = dailyArchiveParameterDal;
+            _fieldDailyArchiveParameters = new List<List<FieldDailyArchiveParameter>>();
         }
 
+
+        [WinFormSecuredOperation(MethodAccessCodes.BusinessDailyArchiveManagerGetArchiveFromDatabase, Messages.DailyArchiveManagerGetArchiveFromDatabase, Priority = 1)]
+        [LogAspect(typeof(FileLogger), Priority = 2)]
         public IDataResult<List<DailyArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(int deviceId, DateTime beginDate, DateTime endDate)
         {
             return new SuccessDataResult<List<DailyArchiveParameter>>(_dailyArchiveParameterDal.GetAll(dp => dp.HistoryDateTime >= beginDate && dp.HistoryDateTime <= endDate && dp.DeviceId == deviceId));
         }
 
-        [ValidationAspect(typeof(DataTransmissionParametersHolderListValidator), Priority = 1)]
-        [LogAspect(typeof(FileLogger), Priority = 2)]
-        public async Task GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters)
+
+
+        [WinFormSecuredOperation(MethodAccessCodes.BusinessDailyArchiveManagerGetArchiveFromDevice, Messages.DailyArchiveManagerGetArchiveFromDevice, Priority = 1)]
+        [ValidationAspect(typeof(DataTransmissionParametersHolderListValidator), Priority = 2)]
+        [LogAspect(typeof(FileLogger), Priority = 3)]
+        public async Task<IResult> GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters, IProgress<ProgressStatus> progress)
         {
             _fieldDailyArchiveParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
 
-            await Task.Run(async () =>
+            return await Task<IResult>.Run(async () =>
             {
                 foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
                 {
@@ -57,6 +68,7 @@ namespace Business.Concrete
                     var result = fieldDailyArchiveParameterService.GetArchiveFromDeviceAsync(deviceParameter);
                     fieldDailyArchiveParameterService.OnFieldDataIsReadyEvent += FieldDailyArchiveParameterService_OnFieldDataIsReadyEvent;
                 }
+                return new SuccessResult();
             });
         }
 
@@ -67,7 +79,7 @@ namespace Business.Concrete
             using (var scope = AutofacBusinessContainerBuilder.AutofacBusinessContainer.BeginLifetimeScope())
             {
                 var dailyArchiveParameterManager = scope.Resolve<IDailyArchiveParameterService>();
-                var result = dailyArchiveParameterManager.AddArchiveParameterTransactionOperation(e.DataList);
+                var result = dailyArchiveParameterManager.AddArchiveParameterTransactionOperation(e.DataList,e.Progress);
 
                 if (result == null)
                 {
@@ -78,7 +90,7 @@ namespace Business.Concrete
 
         [TransactionScopeAspect(Priority = 1)]
         [LogAspect(typeof(FileLogger), Priority = 2)]
-        public IResult AddArchiveParameterTransactionOperation(List<FieldDailyArchiveParameter> fieldDailyArchiveParameters)
+        public IResult AddArchiveParameterTransactionOperation(List<FieldDailyArchiveParameter> fieldDailyArchiveParameters, IProgress<ProgressStatus> progress)
         {
             using (var scope = AutofacBusinessContainerBuilder.AutofacBusinessContainer.BeginLifetimeScope())
             {
@@ -96,6 +108,7 @@ namespace Business.Concrete
             }
             return new SuccessResult();
         }
+
 
         private void ErrorProgressReport(IProgress<ProgressStatus> progress, string message)
         {

@@ -9,6 +9,7 @@ using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Logging.Log4Net.Loggers;
 using Core.Results.Abstract;
 using Core.Results.Concrete;
+using Core.Tools;
 using Core.Utilities.Security;
 using Core.Utilities.Security.Hashing;
 using Entities.Concrete;
@@ -129,7 +130,7 @@ namespace Business.Concrete
         private void GetCurentUserAccess(User user)
         {
             ActiveUser.activeUser = user;
-            ActiveUser.UserLoginDate = DateTime.Now;
+            ActiveUser.UserLoginDate = FormatDateTime.FormatDateTimeAsDateTime(DateTime.Now);
             ActiveUser.userAccess = _userAccessService.GetByUserId(user.UserId).Data;
         }
 
@@ -150,8 +151,8 @@ namespace Business.Concrete
             if (ActiveUser.activeUser!=null)
             {
                 var userLog = _userLogService.Get(ActiveUser.activeUser.UserId, ActiveUser.UserLoginDate).Data;
-
-               //IResult result= _userLogService.Update(userLog, progress);
+                userLog.LogoutDate = FormatDateTime.FormatDateTimeAsDateTime(DateTime.Now);
+                IResult result= _userLogService.Update(userLog, progress);
             }
         }
     }

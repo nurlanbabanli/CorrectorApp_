@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Tools;
+using System;
 
 namespace Core.ActionReports
 {
@@ -13,8 +14,8 @@ namespace Core.ActionReports
             get { return messageWithDateTime; }
             set
             {
-                MessageDateTime = DateTime.Now;
-                messageWithDateTime = MessageDateTime.ToString() + " : " + value;
+                MessageDateTime = FormatDateTime.FormatDateTimeAsDateTime(DateTime.Now);
+                messageWithDateTime = FormatDateTime.FormatDateTimeAsString(MessageDateTime) + " : " + value;
                 OrginalMessage = value;
             }
         }

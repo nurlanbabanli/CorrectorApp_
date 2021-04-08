@@ -1,9 +1,11 @@
 ﻿using Autofac;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.BusinessMessages;
 using Business.DependencyResolvers.Autofac;
 using Business.Helper.ParameterConverters;
 using Business.Utilities;
+using Business.Utilities.Security;
 using Business.ValidationRules.FluentValidation;
 using Core.ActionReports;
 using Core.Aspects.Autofac.Logging;
@@ -34,22 +36,27 @@ namespace Business.Concrete
         public MonthlyType1ArchiveParameterManager(IMonthlyType1ArchiveParameterDal monthlyType1ArchiveParameterDal)
         {
             _monthlyType1ArchiveParameterDal = monthlyType1ArchiveParameterDal;
+            _fieldMonthlyType1ArchiveParameters = new List<List<FieldMonthlyType1ArchiveParameter>>();
         }
-       
+
+
+        [WinFormSecuredOperation(MethodAccessCodes.BusinessMonthlyType1ArchiveManagerGetArchiveFromDatabase, Messages.MonthlyType1ArchiveManagerGetArchiveFromDatabase, Priority = 1)]
+        [LogAspect(typeof(FileLogger), Priority = 2)]
         public IDataResult<List<MonthlyType1ArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(int deviceId, DateTime beginDate, DateTime endDate)
         {
             return new SuccessDataResult<List<MonthlyType1ArchiveParameter>>(_monthlyType1ArchiveParameterDal.GetAll(mp => mp.HistoryDateTime >= beginDate && mp.HistoryDateTime <= endDate && mp.DeviceId == deviceId));
         }
 
 
-        [ValidationAspect(typeof(DataTransmissionParametersHolderListValidator), Priority = 1)]
-        [LogAspect(typeof(FileLogger), Priority = 2)]
-        public async Task GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters)
+        [WinFormSecuredOperation(MethodAccessCodes.BusinessMonthlyType1ArchiveManagerGetArchiveFromDevice, Messages.MonthlyType1ArchiveManagerGetArchiveFromDevice, Priority = 1)]
+        [ValidationAspect(typeof(DataTransmissionParametersHolderListValidator), Priority = 2)]
+        [LogAspect(typeof(FileLogger), Priority = 3)]
+        public async Task<IResult> GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters, IProgress<ProgressStatus> progress)
         {
             _fieldMonthlyType1ArchiveParameters.Clear();
             var semaphoreSlim = ConcurrentTaskLimiter.GetSemaphoreSlim();
 
-            await Task.Run(async() =>
+            return await Task<IResult>.Run(async() =>
             {
                 foreach (var deviceParameter in deviceParameters.DataTransmissionParameterHolderList)
                 {
@@ -59,6 +66,7 @@ namespace Business.Concrete
                     var result = fieldMonthlyType1ArchiveParameterService.GetArchiveFromDeviceAsync(deviceParameter);
                     fieldMonthlyType1ArchiveParameterService.OnFieldDataIsReadyEvent += FieldMonthlyType1ArchiveParameterService_OnFieldDataIsReadyEvent;
                 }
+               return new SuccessResult();
             });
         }
 
@@ -69,7 +77,7 @@ namespace Business.Concrete
             using (var scope = AutofacBusinessContainerBuilder.AutofacBusinessContainer.BeginLifetimeScope())
             {
                 var monthlyType1ArchiveParameterManager = scope.Resolve<IMonthlyType1ArchiveParameterService>();
-                var result = monthlyType1ArchiveParameterManager.AddArchiveParameterTransactionOperation(e.DataList);
+                var result = monthlyType1ArchiveParameterManager.AddArchiveParameterTransactionOperation(e.DataList,e.Progress);
 
                 if (result == null)
                 {
@@ -80,7 +88,7 @@ namespace Business.Concrete
 
         [TransactionScopeAspect(Priority = 1)]
         [LogAspect(typeof(FileLogger), Priority = 2)]
-        public IResult AddArchiveParameterTransactionOperation(List<FieldMonthlyType1ArchiveParameter> fieldMonthlyType1ArchiveParameters)
+        public IResult AddArchiveParameterTransactionOperation(List<FieldMonthlyType1ArchiveParameter> fieldMonthlyType1ArchiveParameters, IProgress<ProgressStatus> progress)
         {
             using (var scope = AutofacBusinessContainerBuilder.AutofacBusinessContainer.BeginLifetimeScope())
             {

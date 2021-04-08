@@ -1,4 +1,5 @@
-﻿using Core.Results.Abstract;
+﻿using Core.ActionReports;
+using Core.Results.Abstract;
 using Core.Utilities.FieldDeviceIdentifier;
 using Entities.Concrete;
 using FieldEntities.Concrete;
@@ -12,8 +13,8 @@ namespace Business.Abstract
 {
     public interface IEventArchiveParameterService
     {
-        Task GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters);
-        IResult AddArchiveParameterTransactionOperation(List<FieldEventArchiveParameter> fieldEventArchiveParameters);
+        Task<IResult> GetArchivesFromDeviceAsync(DataTransmissionParametersHolderList deviceParameters, IProgress<ProgressStatus> progress);
+        IResult AddArchiveParameterTransactionOperation(List<FieldEventArchiveParameter> fieldEventArchiveParameters, IProgress<ProgressStatus> progress);
         IDataResult<List<EventArchiveParameter>> GetArchiveFromDatabaseByDateTimeInterval(int deviceId, DateTime beginDate, DateTime endDate);
     }
 }

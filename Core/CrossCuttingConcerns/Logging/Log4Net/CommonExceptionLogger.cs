@@ -27,7 +27,7 @@ namespace Core.CrossCuttingConcerns.Logging.Log4Net
         {
             LogDetailWithException logDetailWithException = GetLogDetail(invocation);
             logDetailWithException.ExceptionMessage = exception.Message;
-            logDetailWithException.MessageDateTime = FormatDateTime.FormatDateTimeValue(DateTime.Now);
+            logDetailWithException.MessageDateTime = FormatDateTime.FormatDateTimeAsString(DateTime.Now);
             _loggerServiceBase.Error(logDetailWithException);
         }
 
