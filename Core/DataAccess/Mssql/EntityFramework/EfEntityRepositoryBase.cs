@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Core.DataAccess.Mssql.EntityFramework
 {
-    public class EfEntityRepositoryBase<TEntity, TContext> : IEntityRepository<TEntity>
+    public class EfEntityRepositoryBase<TEntity, TContext> : IEfEntityRepository<TEntity>
         where TEntity:class,IEntity,new()
         where TContext: DbContext,new()
     {
@@ -18,7 +18,7 @@ namespace Core.DataAccess.Mssql.EntityFramework
             using (var context=new TContext())
             {
                 var addedEntity = context.Entry(entity);
-               // addedEntity.State = EntityState.Added;
+                addedEntity.State = EntityState.Added;
                 context.SaveChanges();
             }
         }
@@ -28,7 +28,7 @@ namespace Core.DataAccess.Mssql.EntityFramework
             using (var context=new TContext())
             {
                 var deletedEntity = context.Remove(entity);
-                //deletedEntity.State = EntityState.Deleted;
+                deletedEntity.State = EntityState.Deleted;
                 context.SaveChanges();
             }
         }
@@ -48,6 +48,16 @@ namespace Core.DataAccess.Mssql.EntityFramework
                 return expression == null
                     ? context.Set<TEntity>().ToList()
                     : context.Set<TEntity>().Where(expression).ToList();
+            }
+        }
+
+        public void Update(TEntity entity)
+        {
+            using (var context = new TContext())
+            {
+                var updatedEntity = context.Entry(entity);
+                updatedEntity.State = EntityState.Modified;
+                context.SaveChanges();
             }
         }
     }

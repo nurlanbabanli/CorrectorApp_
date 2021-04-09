@@ -1,4 +1,5 @@
 ﻿using Core.DataAccess;
+using Core.DataAccess.Mssql.EntityFramework;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Abstract
 {
-    public interface IMonthlyType1ArchiveParameterDal: IEntityRepository<MonthlyType1ArchiveParameter>
+    public interface IMonthlyType1ArchiveParameterDal: IEfEntityRepository<MonthlyType1ArchiveParameter>
     {
     }
 }

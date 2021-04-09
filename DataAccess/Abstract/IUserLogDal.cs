@@ -1,4 +1,5 @@
-﻿using Entities.Concrete;
+﻿using Core.DataAccess.Mssql.EntityFramework;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Abstract
 {
-    public interface IUserLogDal
+    public interface IUserLogDal:IEfEntityRepository<UserLog>
     {
-        void Add(UserLog userLog);
-        void Update(UserLog userLog);
-        UserLog Get(Expression<Func<UserLog, bool>> expression);
     }
 }

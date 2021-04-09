@@ -1,4 +1,5 @@
-﻿using DataAccess.Abstract;
+﻿using Core.DataAccess.Mssql.EntityFramework;
+using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -9,16 +10,8 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Concrete.Database.Mssql.EntityFramework
 {
-    public class MssqlEfUserAccessTypeDal : IUserAccessTypeDal
+    public class MssqlEfUserAccessTypeDal :EfEntityRepositoryBase<UserAccessType,MssqlCorrectorContext>, IUserAccessTypeDal
     {
-        public List<UserAccessType> GetAll(Expression<Func<UserAccessType, bool>> expression = null)
-        {
-            using (var context = new MssqlCorrectorContext())
-            {
-                return expression == null
-                    ? context.Set<UserAccessType>().ToList()
-                    : context.Set<UserAccessType>().Where(expression).ToList();
-            }
-        }
+
     }
 }

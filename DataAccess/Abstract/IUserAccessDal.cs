@@ -1,4 +1,5 @@
-﻿using Entities.Concrete;
+﻿using Core.DataAccess.Mssql.EntityFramework;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Abstract
 {
-    public interface IUserAccessDal
+    public interface IUserAccessDal: IEfEntityRepository<UserAccess>
     {
-        List<UserAccess> GetAll(Expression<Func<UserAccess, bool>> expression = null);
-        UserAccess Get(Expression<Func<UserAccess, bool>> expression);
-        void Add(UserAccess userAccess);
-        void Update(UserAccess userAccess);
-        void Delete(UserAccess userAccess);
     }
 }

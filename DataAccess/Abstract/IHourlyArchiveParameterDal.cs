@@ -1,4 +1,5 @@
 ﻿using Core.DataAccess;
+using Core.DataAccess.Mssql.EntityFramework;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Abstract
 {
-    public interface IHourlyArchiveParameterDal:IEntityRepository<HourlyArchiveParameter>
+    public interface IHourlyArchiveParameterDal:IEfEntityRepository<HourlyArchiveParameter>
     {
       
     }
